@@ -7,7 +7,7 @@
 LIB CONNECT TO 'ARCGIS_Airports (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the REST
-// source and assign to the 'total' local variable.
+//	source and assign to the 'total' local variable.
 
 LET total = 19765;
 LET totalfetched = 0;
@@ -122,7 +122,12 @@ SQL SELECT
 			"FreightLbs",
 			"MailLbs",
 			"__FK_attributes"
-		FROM "attributes" FK "__FK_attributes")
+		FROM "attributes" FK "__FK_attributes"),
+        (SELECT 
+			"x",
+			"y",
+			"__FK_geometry"
+		FROM "geometry" FK "__FK_geometry")
 	FROM "features" PK "__KEY_features" FK "__FK_features")
 FROM JSON (wrap on) "root" PK "__KEY_root"
 WITH CONNECTION(Url "https://maps.bts.dot.gov/services/rest/services/NTAD/Airports/MapServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
@@ -236,16 +241,412 @@ LOAD	[OBJECTID] AS [ObjectID],
 RESIDENT RestConnectorMasterTable
 WHERE NOT IsNull([__FK_attributes]);
 
+LEFT JOIN (Airports) LOAD
+	[x] AS [Longitude],
+	[y] AS [Latitude],
+	[__FK_geometry] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_geometry]);
+
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [Airports] INTO 'lib://QVD (iparametrics_svc_qliksense)/Airports.qvd';
 DROP TABLE Airports;
+// ############################## BIODIESEL PLANTS ##############################
+LIB CONNECT TO 'ARCGIS_BiodieselPlants (iparametrics_jack.meersman)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"OBJECTID",
+			"BIODID",
+			"NAME",
+			"ADDRESS",
+			"ADDRESS2",
+			"CITY",
+			"STATE",
+			"ZIP",
+			"ZIP4",
+			"TELEPHONE",
+			"TYPE",
+			"STATUS",
+			"POPULATION",
+			"COUNTY",
+			"COUNTYFIPS",
+			"COUNTRY",
+			"LATITUDE",
+			"LONGITUDE",
+			"NAICS_CODE",
+			"NAICS_DESC",
+			"SOURCE",
+			"SOURCEDATE",
+			"VAL_METHOD",
+			"VAL_DATE",
+			"WEBSITE",
+			"OWNER",
+			"POSREL",
+			"CAPACITY",
+			"FUTURECAP",
+			"FEEDSTOCK",
+			"BQ9000",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root";
+
+[BiodieselPlants]:
+LOAD	[OBJECTID] AS [ObjectID],
+		[BIODID] AS [BIOD ID],
+		[NAME] AS [Name],
+		[ADDRESS] AS [Address],
+		[ADDRESS2] AS [Address2],
+		[CITY] AS [City],
+		[STATE] AS [State],
+		[ZIP],
+		[ZIP4],
+		[TELEPHONE] AS [Phone],
+		[TYPE] AS [Type],
+		[STATUS] AS [Status],
+		[POPULATION] AS [Population],
+		[COUNTY] AS [County],
+		[COUNTYFIPS] AS [County FIPS],
+		[COUNTRY] AS [Country],
+		[LATITUDE] AS [Latitude],
+		[LONGITUDE] AS [Longitude],
+		[NAICS_CODE] AS [NAICS Code],
+		[NAICS_DESC] AS [NAICS Description],
+		[SOURCE] AS [Source],
+		[SOURCEDATE] AS [Source Date],
+		[VAL_METHOD] AS [Validation Method],
+		[VAL_DATE] AS [Validation Date],
+		[WEBSITE] AS [Website],
+		[OWNER] AS [Owner],
+		[POSREL],
+		[CAPACITY] AS [Capacity],
+		[FUTURECAP] AS [Future Capacity],
+		[FEEDSTOCK] AS [Feedstock],
+		[BQ9000] AS [BQ9000],
+		[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [BiodieselPlants] INTO 'lib://QVD (iparametrics_svc_qliksense)/BiodieselPlants.qvd';
+DROP TABLE BiodieselPlants;
 // ############################## BRIDGES ##############################
-LIB CONNECT TO 'ARCGIS_Bridges (iparametrics_jack.meersman)';
+// LIB CONNECT TO 'ARCGIS_Bridges (iparametrics_jack.meersman)';
+
+// // Action required: Implement the logic to retrieve the total records from the REST
+// //	source and assign to the 'total' local variable.
+
+// LET total = 607751;
+// LET totalfetched = 0;
+// LET startAt = 0;
+// LET pageSize = 2000;
+
+// for startAt = 0 to total step pageSize
+// RestConnectorMasterTable:
+// SQL SELECT 
+// 	"__KEY_root",
+// 	(SELECT 
+// 		"__FK_features",
+// 		"__KEY_features",
+// 		(SELECT 
+// 			"FID",
+// 			"STFIPS",
+// 			"REGION",
+// 			"ITEM8",
+// 			"ITEM5A",
+// 			"ITEM5B",
+// 			"ITEM5C",
+// 			"ITEM5D",
+// 			"ITEM5E",
+// 			"ITEM2",
+// 			"ITEM3",
+// 			"ITEM4",
+// 			"ITEM6A",
+// 			"ITEM6B",
+// 			"ITEM7",
+// 			"ITEM9",
+// 			"ITEM10",
+// 			"ITEM11",
+// 			"ITEM12",
+// 			"ITEM13A",
+// 			"ITEM13B",
+// 			"ITEM16",
+// 			"ITEM17",
+// 			"ITEM19",
+// 			"ITEM20",
+// 			"ITEM21",
+// 			"ITEM22",
+// 			"ITEM26",
+// 			"ITEM27",
+// 			"ITEM28A",
+// 			"ITEM28B",
+// 			"ITEM29",
+// 			"ITEM30",
+// 			"ITEM31",
+// 			"ITEM32",
+// 			"ITEM33",
+// 			"ITEM34",
+// 			"ITEM35",
+// 			"ITEM36A",
+// 			"ITEM36B",
+// 			"ITEM36C",
+// 			"ITEM36D",
+// 			"ITEM37",
+// 			"ITEM38",
+// 			"ITEM39",
+// 			"ITEM40",
+// 			"ITEM41",
+// 			"ITEM42A",
+// 			"ITEM42B",
+// 			"ITEM43A",
+// 			"ITEM43B",
+// 			"ITEM44A",
+// 			"ITEM44B",
+// 			"ITEM45",
+// 			"ITEM46",
+// 			"ITEM47",
+// 			"ITEM48",
+// 			"ITEM49",
+// 			"ITEM50A",
+// 			"ITEM50B",
+// 			"ITEM51",
+// 			"ITEM52",
+// 			"ITEM53",
+// 			"ITEM54A",
+// 			"ITEM54B",
+// 			"ITEM55A",
+// 			"ITEM55B",
+// 			"ITEM56",
+// 			"ITEM58",
+// 			"ITEM59",
+// 			"ITEM60",
+// 			"ITEM61",
+// 			"ITEM62",
+// 			"ITEM63",
+// 			"ITEM64",
+// 			"ITEM65",
+// 			"ITEM66",
+// 			"ITEM67",
+// 			"ITEM68",
+// 			"ITEM69",
+// 			"ITEM70",
+// 			"ITEM71",
+// 			"ITEM72",
+// 			"ITEM75A",
+// 			"ITEM75B",
+// 			"ITEM76",
+// 			"ITEM90",
+// 			"ITEM91",
+// 			"ITEM92A",
+// 			"ITEM92B",
+// 			"ITEM92C",
+// 			"ITEM93A",
+// 			"ITEM93B",
+// 			"ITEM93C",
+// 			"ITEM94",
+// 			"ITEM95",
+// 			"ITEM96",
+// 			"ITEM97",
+// 			"ITEM98A",
+// 			"ITEM98B",
+// 			"ITEM99",
+// 			"ITEM100",
+// 			"ITEM101",
+// 			"ITEM102",
+// 			"ITEM103",
+// 			"ITEM104",
+// 			"ITEM105",
+// 			"ITEM106",
+// 			"ITEM107",
+// 			"ITEM108A",
+// 			"ITEM108B",
+// 			"ITEM108C",
+// 			"ITEM109",
+// 			"ITEM110",
+// 			"ITEM111",
+// 			"ITEM112",
+// 			"ITEM113",
+// 			"ITEM114",
+// 			"ITEM115",
+// 			"ITEM116",
+// 			"FUNDED",
+// 			"FEDERAL",
+// 			"WO",
+// 			"DT",
+// 			"WO_2",
+// 			"STAT",
+// 			"SR1",
+// 			"SR2",
+// 			"EXTRA",
+// 			"STATUS",
+// 			"DATE",
+// 			"LONGDD",
+// 			"LATDD",
+// 			"__FK_attributes"
+// 		FROM "attributes" FK "__FK_attributes")
+// 	FROM "features" PK "__KEY_features" FK "__FK_features")
+// FROM JSON (wrap on) "root" PK "__KEY_root"
+// WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/National_Bridge_Inventory_(NBI)_Bridges/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
+// // Action required: change URL included in 'WITH CONNECTION' AS needed
+// //		to support pagination for the REST source.
+// // Please see the documentation for "Loading paged data."
+
+// NEXT startAt;
+
+// [Bridges]:
+// LOAD	[FID],
+// 		[STFIPS] AS [State FIPS],
+// 		[REGION] AS [Region],
+// 		[ITEM8],
+// 		[ITEM5A],
+// 		[ITEM5B],
+// 		[ITEM5C],
+// 		[ITEM5D],
+// 		[ITEM5E],
+// 		[ITEM2],
+// 		[ITEM3],
+// 		[ITEM4],
+// 		[ITEM6A],
+// 		[ITEM6B],
+// 		[ITEM7],
+// 		[ITEM9],
+// 		[ITEM10],
+// 		[ITEM11],
+// 		[ITEM12],
+// 		[ITEM13A],
+// 		[ITEM13B],
+// 		[ITEM16],
+// 		[ITEM17],
+// 		[ITEM19],
+// 		[ITEM20],
+// 		[ITEM21],
+// 		[ITEM22],
+// 		[ITEM26],
+// 		[ITEM27],
+// 		[ITEM28A],
+// 		[ITEM28B],
+// 		[ITEM29],
+// 		[ITEM30],
+// 		[ITEM31],
+// 		[ITEM32],
+// 		[ITEM33],
+// 		[ITEM34],
+// 		[ITEM35],
+// 		[ITEM36A],
+// 		[ITEM36B],
+// 		[ITEM36C],
+// 		[ITEM36D],
+// 		[ITEM37],
+// 		[ITEM38],
+// 		[ITEM39],
+// 		[ITEM40],
+// 		[ITEM41],
+// 		[ITEM42A],
+// 		[ITEM42B],
+// 		[ITEM43A],
+// 		[ITEM43B],
+// 		[ITEM44A],
+// 		[ITEM44B],
+// 		[ITEM45],
+// 		[ITEM46],
+// 		[ITEM47],
+// 		[ITEM48],
+// 		[ITEM49],
+// 		[ITEM50A],
+// 		[ITEM50B],
+// 		[ITEM51],
+// 		[ITEM52],
+// 		[ITEM53],
+// 		[ITEM54A],
+// 		[ITEM54B],
+// 		[ITEM55A],
+// 		[ITEM55B],
+// 		[ITEM56],
+// 		[ITEM58],
+// 		[ITEM59],
+// 		[ITEM60],
+// 		[ITEM61],
+// 		[ITEM62],
+// 		[ITEM63],
+// 		[ITEM64],
+// 		[ITEM65],
+// 		[ITEM66],
+// 		[ITEM67],
+// 		[ITEM68],
+// 		[ITEM69],
+// 		[ITEM70],
+// 		[ITEM71],
+// 		[ITEM72],
+// 		[ITEM75A],
+// 		[ITEM75B],
+// 		[ITEM76],
+// 		[ITEM90],
+// 		[ITEM91],
+// 		[ITEM92A],
+// 		[ITEM92B],
+// 		[ITEM92C],
+// 		[ITEM93A],
+// 		[ITEM93B],
+// 		[ITEM93C],
+// 		[ITEM94],
+// 		[ITEM95],
+// 		[ITEM96],
+// 		[ITEM97],
+// 		[ITEM98A],
+// 		[ITEM98B],
+// 		[ITEM99],
+// 		[ITEM100],
+// 		[ITEM101],
+// 		[ITEM102],
+// 		[ITEM103],
+// 		[ITEM104],
+// 		[ITEM105],
+// 		[ITEM106],
+// 		[ITEM107],
+// 		[ITEM108A],
+// 		[ITEM108B],
+// 		[ITEM108C],
+// 		[ITEM109],
+// 		[ITEM110],
+// 		[ITEM111],
+// 		[ITEM112],
+// 		[ITEM113],
+// 		[ITEM114],
+// 		[ITEM115],
+// 		[ITEM116],
+// 		[FUNDED] AS [Funded],
+// 		[FEDERAL] AS [Federal],
+// 		[WO],
+// 		[DT],
+// 		[WO_2],
+// 		[STAT],
+// 		[SR1],
+// 		[SR2],
+// 		[EXTRA] AS [Extra],
+// 		[STATUS] AS [Status],
+// 		[DATE] AS [Date],
+// 		[LONGDD] AS [Longitude],
+// 		[LATDD] AS [Latitude],
+// 		[__FK_attributes] AS [__KEY_features]
+// RESIDENT RestConnectorMasterTable
+// WHERE NOT IsNull([__FK_attributes]);
+
+// DROP TABLE RestConnectorMasterTable;
+// STORE * FROM [Bridges] INTO 'lib://QVD (iparametrics_svc_qliksense)/Bridges.qvd';
+// DROP TABLE Bridges;
+// ############################## CELL TOWERS ##############################
+LIB CONNECT TO 'ARCGIS_CellTowers (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the REST
-// source and assign to the 'total' local variable.
+//	source and assign to the 'total' local variable.
 
-LET total = 607751;
+LET total = 23498;
 LET totalfetched = 0;
 LET startAt = 0;
 LET pageSize = 2000;
@@ -258,296 +659,80 @@ SQL SELECT
 		"__FK_features",
 		"__KEY_features",
 		(SELECT 
-			"FID",
-			"STFIPS",
-			"REGION",
-			"ITEM8",
-			"ITEM5A",
-			"ITEM5B",
-			"ITEM5C",
-			"ITEM5D",
-			"ITEM5E",
-			"ITEM2",
-			"ITEM3",
-			"ITEM4",
-			"ITEM6A",
-			"ITEM6B",
-			"ITEM7",
-			"ITEM9",
-			"ITEM10",
-			"ITEM11",
-			"ITEM12",
-			"ITEM13A",
-			"ITEM13B",
-			"ITEM16",
-			"ITEM17",
-			"ITEM19",
-			"ITEM20",
-			"ITEM21",
-			"ITEM22",
-			"ITEM26",
-			"ITEM27",
-			"ITEM28A",
-			"ITEM28B",
-			"ITEM29",
-			"ITEM30",
-			"ITEM31",
-			"ITEM32",
-			"ITEM33",
-			"ITEM34",
-			"ITEM35",
-			"ITEM36A",
-			"ITEM36B",
-			"ITEM36C",
-			"ITEM36D",
-			"ITEM37",
-			"ITEM38",
-			"ITEM39",
-			"ITEM40",
-			"ITEM41",
-			"ITEM42A",
-			"ITEM42B",
-			"ITEM43A",
-			"ITEM43B",
-			"ITEM44A",
-			"ITEM44B",
-			"ITEM45",
-			"ITEM46",
-			"ITEM47",
-			"ITEM48",
-			"ITEM49",
-			"ITEM50A",
-			"ITEM50B",
-			"ITEM51",
-			"ITEM52",
-			"ITEM53",
-			"ITEM54A",
-			"ITEM54B",
-			"ITEM55A",
-			"ITEM55B",
-			"ITEM56",
-			"ITEM58",
-			"ITEM59",
-			"ITEM60",
-			"ITEM61",
-			"ITEM62",
-			"ITEM63",
-			"ITEM64",
-			"ITEM65",
-			"ITEM66",
-			"ITEM67",
-			"ITEM68",
-			"ITEM69",
-			"ITEM70",
-			"ITEM71",
-			"ITEM72",
-			"ITEM75A",
-			"ITEM75B",
-			"ITEM76",
-			"ITEM90",
-			"ITEM91",
-			"ITEM92A",
-			"ITEM92B",
-			"ITEM92C",
-			"ITEM93A",
-			"ITEM93B",
-			"ITEM93C",
-			"ITEM94",
-			"ITEM95",
-			"ITEM96",
-			"ITEM97",
-			"ITEM98A",
-			"ITEM98B",
-			"ITEM99",
-			"ITEM100",
-			"ITEM101",
-			"ITEM102",
-			"ITEM103",
-			"ITEM104",
-			"ITEM105",
-			"ITEM106",
-			"ITEM107",
-			"ITEM108A",
-			"ITEM108B",
-			"ITEM108C",
-			"ITEM109",
-			"ITEM110",
-			"ITEM111",
-			"ITEM112",
-			"ITEM113",
-			"ITEM114",
-			"ITEM115",
-			"ITEM116",
-			"FUNDED",
-			"FEDERAL",
-			"WO",
-			"DT",
-			"WO_2",
-			"STAT",
-			"SR1",
-			"SR2",
-			"EXTRA",
-			"STATUS",
-			"DATE",
-			"LONGDD",
-			"LATDD",
+			"OBJECTID",
+			"LICENSEE",
+			"CALLSIGN",
+			"LOCNUM",
+			"LAT_DMS",
+			"LATDIR",
+			"LON_DMS",
+			"LONDIR",
+			"LOCADD",
+			"LOCCITY",
+			"LOCCOUNTY",
+			"LOCSTATE",
+			"NEPA",
+			"QZONE",
+			"TOWREG",
+			"SUPSTRUC",
+			"ALLSTRUC",
+			"STRUCTYPE",
+			"LIC_ID",
 			"__FK_attributes"
-		FROM "attributes" FK "__FK_attributes")
+		FROM "attributes" FK "__FK_attributes"),
+        (SELECT 
+			"x",
+			"y",
+			"__FK_geometry"
+		FROM "geometry" FK "__FK_geometry")
 	FROM "features" PK "__KEY_features" FK "__FK_features")
 FROM JSON (wrap on) "root" PK "__KEY_root"
-WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/National_Bridge_Inventory_(NBI)_Bridges/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
+WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/Cellular_Towers/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
 // Action required: change URL included in 'WITH CONNECTION' AS needed
 //		to support pagination for the REST source.
 // Please see the documentation for "Loading paged data."
 
 NEXT startAt;
 
-[Bridges]:
-LOAD	[FID],
-		[STFIPS] AS [State FIPS],
-		[REGION] AS [Region],
-		[ITEM8],
-		[ITEM5A],
-		[ITEM5B],
-		[ITEM5C],
-		[ITEM5D],
-		[ITEM5E],
-		[ITEM2],
-		[ITEM3],
-		[ITEM4],
-		[ITEM6A],
-		[ITEM6B],
-		[ITEM7],
-		[ITEM9],
-		[ITEM10],
-		[ITEM11],
-		[ITEM12],
-		[ITEM13A],
-		[ITEM13B],
-		[ITEM16],
-		[ITEM17],
-		[ITEM19],
-		[ITEM20],
-		[ITEM21],
-		[ITEM22],
-		[ITEM26],
-		[ITEM27],
-		[ITEM28A],
-		[ITEM28B],
-		[ITEM29],
-		[ITEM30],
-		[ITEM31],
-		[ITEM32],
-		[ITEM33],
-		[ITEM34],
-		[ITEM35],
-		[ITEM36A],
-		[ITEM36B],
-		[ITEM36C],
-		[ITEM36D],
-		[ITEM37],
-		[ITEM38],
-		[ITEM39],
-		[ITEM40],
-		[ITEM41],
-		[ITEM42A],
-		[ITEM42B],
-		[ITEM43A],
-		[ITEM43B],
-		[ITEM44A],
-		[ITEM44B],
-		[ITEM45],
-		[ITEM46],
-		[ITEM47],
-		[ITEM48],
-		[ITEM49],
-		[ITEM50A],
-		[ITEM50B],
-		[ITEM51],
-		[ITEM52],
-		[ITEM53],
-		[ITEM54A],
-		[ITEM54B],
-		[ITEM55A],
-		[ITEM55B],
-		[ITEM56],
-		[ITEM58],
-		[ITEM59],
-		[ITEM60],
-		[ITEM61],
-		[ITEM62],
-		[ITEM63],
-		[ITEM64],
-		[ITEM65],
-		[ITEM66],
-		[ITEM67],
-		[ITEM68],
-		[ITEM69],
-		[ITEM70],
-		[ITEM71],
-		[ITEM72],
-		[ITEM75A],
-		[ITEM75B],
-		[ITEM76],
-		[ITEM90],
-		[ITEM91],
-		[ITEM92A],
-		[ITEM92B],
-		[ITEM92C],
-		[ITEM93A],
-		[ITEM93B],
-		[ITEM93C],
-		[ITEM94],
-		[ITEM95],
-		[ITEM96],
-		[ITEM97],
-		[ITEM98A],
-		[ITEM98B],
-		[ITEM99],
-		[ITEM100],
-		[ITEM101],
-		[ITEM102],
-		[ITEM103],
-		[ITEM104],
-		[ITEM105],
-		[ITEM106],
-		[ITEM107],
-		[ITEM108A],
-		[ITEM108B],
-		[ITEM108C],
-		[ITEM109],
-		[ITEM110],
-		[ITEM111],
-		[ITEM112],
-		[ITEM113],
-		[ITEM114],
-		[ITEM115],
-		[ITEM116],
-		[FUNDED] AS [Funded],
-		[FEDERAL] AS [Federal],
-		[WO],
-		[DT],
-		[WO_2],
-		[STAT],
-		[SR1],
-		[SR2],
-		[EXTRA] AS [Extra],
-		[STATUS] AS [Status],
-		[DATE] AS [Date],
-		[LONGDD] AS [Longitude],
-		[LATDD] AS [Latitude],
+[CellTowers]:
+LOAD	[OBJECTID] AS [ObjectID],
+		[LICENSEE] AS [Licensee],
+		[CALLSIGN] AS [Callsign],
+		[LOCNUM] AS [Location Number],
+		[LAT_DMS] AS [Latitude Dimension],
+		[LATDIR] AS [Latitude Direction],
+		[LON_DMS] AS [Longitude Dimension],
+		[LONDIR] AS [Longitude Direction],
+		[LOCADD] AS [Address],
+		[LOCCITY] AS [City],
+		[LOCCOUNTY] AS [County],
+		[LOCSTATE] AS [State],
+		[NEPA],
+		[QZONE],
+		[TOWREG],
+		[SUPSTRUC],
+		[ALLSTRUC],
+		[STRUCTYPE] AS [Structure Type],
+		[LIC_ID] AS [LIC ID],
 		[__FK_attributes] AS [__KEY_features]
 RESIDENT RestConnectorMasterTable
 WHERE NOT IsNull([__FK_attributes]);
 
+LEFT JOIN (CellTowers) LOAD
+	[x] AS [Longitude],
+	[y] AS [Latitude],
+	[__FK_geometry] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_geometry]);
+
 DROP TABLE RestConnectorMasterTable;
-STORE * FROM [Bridges] INTO 'lib://QVD (iparametrics_svc_qliksense)/Bridges.qvd';
-DROP TABLE Bridges;
-// ############################## Colleges ##############################
+STORE * FROM [CellTowers] INTO 'lib://QVD (iparametrics_svc_qliksense)/CellTowers.qvd';
+DROP TABLE CellTowers;
+// ############################## COLLEGES ##############################
 LIB CONNECT TO 'ARCGIS_Colleges (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the REST
-// source and assign to the 'total' local variable.
+//	source and assign to the 'total' local variable.
 
 LET total = 7520;
 LET totalfetched = 0;
@@ -668,7 +853,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [Colleges] INTO 'lib://QVD (iparametrics_svc_qliksense)/Colleges.qvd';
 DROP TABLE Colleges;
-// ############################## Dam Lines ##############################
+// ############################## DAM LINES ##############################
 LIB CONNECT TO 'ARCGIS_DamLines (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -864,7 +1049,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [DamLines] INTO 'lib://QVD (iparametrics_svc_qliksense)/DamLines.qvd';
 DROP TABLE DamLines;
-// ############################## Day Care Centers ##############################
+// ############################## DAY CARE CENTERS ##############################
 LIB CONNECT TO 'ARCGIS_DayCareCenters (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -958,7 +1143,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [DayCareCenters] INTO 'lib://QVD (iparametrics_svc_qliksense)/DayCareCenters.qvd';
 DROP TABLE DayCareCenters;
-// ############################## EMS Stations ##############################
+// ############################## EMS STATIONS ##############################
 LIB CONNECT TO 'ARCGIS_EMS_Stations (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -1094,15 +1279,120 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [EMS_Stations] INTO 'lib://QVD (iparametrics_svc_qliksense)/EMS_Stations.qvd';
 DROP TABLE EMS_Stations;
-// ############################## FEMA Regional HQ ##############################
+// ############################## ETHANOL PLANTS ##############################
+LIB CONNECT TO 'ARCGIS_EthanolPlants (iparametrics_jack.meersman)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"OBJECTID",
+			"ETHPID",
+			"NAME",
+			"ADDRESS",
+			"ADDRESS2",
+			"CITY",
+			"STATE",
+			"ZIP",
+			"ZIP4",
+			"TELEPHONE",
+			"TYPE",
+			"STATUS",
+			"POPULATION",
+			"COUNTY",
+			"COUNTYFIPS",
+			"COUNTRY",
+			"LATITUDE",
+			"LONGITUDE",
+			"NAICS_CODE",
+			"NAICS_DESC",
+			"SOURCE",
+			"SOURCEDATE",
+			"VAL_METHOD",
+			"VAL_DATE",
+			"WEBSITE",
+			"EPAFACID",
+			"OWNER",
+			"POSREL",
+			"PADD",
+			"SEC_NAICS",
+			"SEC_N_DESC",
+			"HQ_PHONE",
+			"CURRENTCAP",
+			"NAMEPLATE",
+			"FUTURECAP",
+			"FEEDSTOCK",
+			"PLATFORM",
+			"RAILROAD",
+			"RMP_ID",
+			"EPA_ID",
+			"PROCAMT",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root";
+
+[EthanolPlants]:
+LOAD	[OBJECTID] AS [ObjectID],
+		[ETHPID] AS [ETHP ID],
+		[NAME] AS [Name],
+		[ADDRESS] AS [Address],
+		[ADDRESS2] AS [Address2],
+		[CITY] AS [City],
+		[STATE] AS [State],
+		[ZIP],
+		[ZIP4],
+		[TELEPHONE] AS [Phone],
+		[TYPE] AS [Type],
+		[STATUS] AS [Status],
+		[POPULATION] AS [Population],
+		[COUNTY] AS [County],
+		[COUNTYFIPS] AS [County FIPS],
+		[COUNTRY] AS [Country],
+		[LATITUDE] AS [Latitude],
+		[LONGITUDE] AS [Longitude],
+		[NAICS_CODE] AS [NAICS Code],
+		[NAICS_DESC] AS [NAICS Description],
+		[SOURCE] AS [Source],
+		[SOURCEDATE] AS [Source Date],
+		[VAL_METHOD] AS [Val Method],
+		[VAL_DATE] AS [Val Date],
+		[WEBSITE] AS [Website],
+		[EPAFACID] AS [EPAFAC ID],
+		[OWNER] AS [Owner],
+		[POSREL],
+		[PADD] AS [PADD],
+		[SEC_NAICS] AS [SEC NAICS],
+		[SEC_N_DESC] AS [SEC NAICS Description],
+		[HQ_PHONE] AS [Hq Phone],
+		[CURRENTCAP] AS [Current Capacity],
+		[NAMEPLATE] AS [Nameplate],
+		[FUTURECAP] AS [Future Capacity],
+		[FEEDSTOCK] AS [Feedstock],
+		[PLATFORM] AS [Platform],
+		[RAILROAD] AS [Railroad],
+		[RMP_ID] AS [RMP ID],
+		[EPA_ID] AS [EPA ID],
+		[PROCAMT],
+		[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [EthanolPlants] INTO 'lib://QVD (iparametrics_svc_qliksense)/EthanolPlants.qvd';
+DROP TABLE EthanolPlants;
+// ############################## FEMA REGIONAL HQ ##############################
 LIB CONNECT TO 'ARCGIS_FEMA_RegionalHQ (iparametrics_jack.meersman)';
 
 RestConnectorMasterTable:
 SQL SELECT 
 	"__KEY_root",
 	(SELECT 
-		"__KEY_features",
 		"__FK_features",
+		"__KEY_features",
 		(SELECT 
 			"FID",
 			"CITY_NAME",
@@ -1124,44 +1414,33 @@ SQL SELECT
 	FROM "features" PK "__KEY_features" FK "__FK_features")
 FROM JSON (wrap on) "root" PK "__KEY_root";
 
-[FEMA_RegionalHQ_Data]:
-LOAD	[FID] AS [FID],
-		[CITY_NAME] AS [City],
-		[STATE_NAME] AS [State],
-		[TYPE] AS [Type],
-		[REGION_NO] AS [Region Number],
-		[ST_ADDR] AS [Address],
-		[ZIP] AS [ZIP],
-		[ZIP_4] AS [ZIP4],
-		[OTHER_ADDR] AS [Other Address],
-		[Name] AS [Name],
-		[__FK_attributes] AS [__KEY_features]
+[FEMA_RegionalHQ]:
+LOAD	
+	[FID] AS [FID],
+	[CITY_NAME] AS [City],
+	[STATE_NAME] AS [State],
+	[TYPE] AS [Type],
+	[REGION_NO] AS [Region],
+	[ST_ADDR] AS [Address],
+	[ZIP] AS [ZIP],
+	[ZIP_4] AS [ZIP4],
+	[OTHER_ADDR] AS [Other Address],
+	[Name] AS [Name],
+	[__FK_attributes] AS [__KEY_features]
 RESIDENT RestConnectorMasterTable
 WHERE NOT IsNull([__FK_attributes]);
 
-[FEMA_RegionalHQ_Geometry]:
-LOAD	[x] AS [X],
-		[y] AS [Y],
-		[__FK_geometry] AS [__KEY_features]
+LEFT JOIN (FEMA_RegionalHQ) LOAD
+	[x] AS [Longitude],
+	[y] AS [Latitude],
+	[__FK_geometry] AS [__KEY_features]
 RESIDENT RestConnectorMasterTable
 WHERE NOT IsNull([__FK_geometry]);
 
-[FEMA_RegionalHQ_Features]:
-LOAD	[__KEY_features] AS [__KEY_features],
-		[__FK_features] AS [__KEY_root]
-RESIDENT RestConnectorMasterTable
-WHERE NOT IsNull([__FK_features]);
-
 DROP TABLE RestConnectorMasterTable;
-
-STORE * FROM [FEMA_RegionalHQ_Data] INTO 'lib://QVD (iparametrics_svc_qliksense)/FEMA_RegionalHQ_Data.qvd';
-STORE * FROM [FEMA_RegionalHQ_Geometry] INTO 'lib://QVD (iparametrics_svc_qliksense)/FEMA_RegionalHQ_Geometry.qvd';
-STORE * FROM [FEMA_RegionalHQ_Features] INTO 'lib://QVD (iparametrics_svc_qliksense)/FEMA_RegionalHQ_Features.qvd';
-
-DROP TABLE [FEMA_RegionalHQ_Data];
-DROP TABLE [FEMA_RegionalHQ_Geometry];
-DROP TABLE [FEMA_RegionalHQ_Features];
-// ############################## Fire Stations ##############################
+STORE * FROM [FEMA_RegionalHQ] INTO 'lib://QVD (iparametrics_svc_qliksense)/FEMA_RegionalHQ.qvd';
+DROP TABLE [FEMA_RegionalHQ];
+// ############################## FIRE STATIONS ##############################
 LIB CONNECT TO 'ARCGIS_FireStations (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -1296,7 +1575,104 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [FireStations] INTO 'lib://QVD (iparametrics_svc_qliksense)/FireStations.qvd';
 DROP TABLE FireStations;
-// ############################## Hospitals ##############################
+// #################### GOVERNMENT FINANCIAL PROCESSING CENTERS ####################
+LIB CONNECT TO 'ARCGIS_GovtFinancialProcessing (iparametrics_jack.meersman)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"FID",
+			"NGAID",
+			"SRCLNKID",
+			"METLNKID",
+			"FEATTYPE",
+			"SECCLASS",
+			"NAME",
+			"AREA_",
+			"PHONE",
+			"ADDRESS",
+			"ADDRESS2",
+			"CITY",
+			"STATE",
+			"ZIP",
+			"ZIPP4",
+			"COUNTY",
+			"FIPS",
+			"DIRECTIONS",
+			"EMERGTITLE",
+			"EMERGPHONE",
+			"EMERGEXT",
+			"CONTDATE",
+			"CONTHOW",
+			"GEODATE",
+			"GEOHOW",
+			"HSIPTHEMES",
+			"NAICSCODE",
+			"NAICSDESCR",
+			"GEOLINKID",
+			"SOURCE",
+			"X",
+			"Y",
+			"ST_VENDOR",
+			"ST_VERSION",
+			"GEOPREC",
+			"PHONELOC",
+			"QC_QA",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root";
+
+[GovernmentFinancialProcessing]:
+LOAD	[FID],
+		[NGAID] AS [NGA ID],
+		[SRCLNKID] AS [SRCLNKID],
+		[METLNKID] AS [METLNKID],
+		[FEATTYPE] AS [FEATTYPE],
+		[SECCLASS] AS [SEC Class],
+		[NAME] AS [Name],
+		[AREA_] AS [Area],
+		[PHONE] AS [Phone],
+		[ADDRESS] AS [Address],
+		[ADDRESS2] AS [Address2],
+		[CITY] AS [City],
+		[STATE] AS [State],
+		[ZIP] AS [ZIP],
+		[ZIPP4] AS [ZIP4],
+		[COUNTY] AS [County],
+		[FIPS] AS [FIPS],
+		[DIRECTIONS] AS [Directions],
+		[EMERGTITLE] AS [EMERGTITLE],
+		[EMERGPHONE] AS [EMERGPHONE],
+		[EMERGEXT] AS [EMERGEXT],
+		[CONTDATE] AS [CONTDATE],
+		[CONTHOW] AS [CONTHOW],
+		[GEODATE] AS [GEODATE],
+		[GEOHOW] AS [GEOHOW],
+		[HSIPTHEMES] AS [HSIPTHEMES],
+		[NAICSCODE] AS [NAICS Code],
+		[NAICSDESCR] AS [NAICS Description],
+		[GEOLINKID] AS [GeoLinkID],
+		[SOURCE] AS [Source],
+		[X] AS [Longitude],
+		[Y] AS [Latitude],
+		[ST_VENDOR] AS [ST Vendor],
+		[ST_VERSION] AS [ST Version],
+		[GEOPREC] AS [GEOPREC],
+		[PHONELOC] AS [PHONELOC],
+		[QC_QA] AS [QC_QA],
+		[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [GovernmentFinancialProcessing] INTO 'lib://QVD (iparametrics_svc_qliksense)/GovernmentFinancialProcessing.qvd';
+DROP TABLE GovernmentFinancialProcessing;
+// ############################## HOSPITALS ##############################
 LIB CONNECT TO 'ARCGIS_Hospitals (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -1402,7 +1778,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [Hospitals] INTO 'lib://QVD (iparametrics_svc_qliksense)/Hospitals.qvd';
 DROP TABLE Hospitals;
-// ############################## Local EOCs ##############################
+// ############################## LOCAL EOCS ##############################
 LIB CONNECT TO 'ARCGIS_LocalEOC (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -1572,7 +1948,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [LocalEOC] INTO 'lib://QVD (iparametrics_svc_qliksense)/LocalEOC.qvd';
 DROP TABLE LocalEOC;
-// ############################## Local Law Enforcement ##############################
+// ############################## LOCAL LAW ENFORCEMENT ##############################
 LIB CONNECT TO 'ARCGIS_LocalLawEnforcement (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -1706,7 +2082,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [LocalLawEnforcement] INTO 'lib://QVD (iparametrics_svc_qliksense)/LocalLawEnforcement.qvd';
 DROP TABLE LocalLawEnforcement;
-// ######################### Major State Government Buildings #########################
+// ######################### MAJOR STATE GOVERNMENT BUILDINGS #########################
 LIB CONNECT TO 'ARCGIS_MajorStateGovBuildings (iparametrics_jack.meersman)';
 
 RestConnectorMasterTable:
@@ -1807,8 +2183,76 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [MajorStateGovBuildings] INTO 'lib://QVD (iparametrics_svc_qliksense)/MajorStateGovBuildings.qvd';
 DROP TABLE MajorStateGovBuildings;
-// ############################## Natural Gas Storage ##############################
-LIB CONNECT TO 'ARCGIS_NaturalGas (iparametrics_jack.meersman)';
+// ############################## NATURAL GAS HUBS ##############################
+LIB CONNECT TO 'ARCGIS_NaturalGasHubs (iparametrics_jack.meersman)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"FID",
+			"Region",
+			"State",
+			"Hub_name",
+			"Adminstr",
+			"Operator",
+			"Typeoper",
+			"Yr_activat",
+			"Maxthru",
+			"Avgdaily",
+			"Numcust",
+			"Status",
+			"Notes",
+			"City",
+			"County_1",
+			"County_2",
+			"Authority",
+			"Rates",
+			"Platform",
+			"Yearofdata",
+			"Latitude",
+			"Longitude",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root";
+
+[NaturalGasHubs]:
+LOAD	
+	[FID],
+	[Region],
+	[State],
+	[Hub_name] AS [Hub Name],
+	[Adminstr] AS [Administrator],
+	[Operator],
+	[Typeoper] AS [Type Operator],
+	[Yr_activat] AS [Year Activated],
+	[Maxthru] AS [Max Throughput],
+	[Avgdaily] AS [Average Daily],
+	[Numcust] AS [Number of Customers],
+	[Status],
+	[Notes],
+	[City],
+	[County_1] AS [County],
+	[County_2] AS [County2],
+	[Authority],
+	[Rates],
+	[Platform],
+	[Yearofdata] AS [Year of Data],
+	[Latitude],
+	[Longitude],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [NaturalGasHubs] INTO 'lib://QVD (iparametrics_svc_qliksense)/NaturalGasHubs.qvd';
+DROP TABLE NaturalGasHubs;
+// ############################## NATURAL GAS STORAGE ##############################
+LIB CONNECT TO 'ARCGIS_NaturalGasStorage (iparametrics_jack.meersman)';
 
 RestConnectorMasterTable:
 SQL SELECT 
@@ -1894,7 +2338,7 @@ LOAD	[OBJECTID] AS [ObjectID],
 		[OWNERPCT],
 		[MAXDEL],
 		[TOTALCAP] AS [Total Capacity],
-		[WORKCAP],
+		[WORKCAP] AS [Working Capacity],
 		[PROPMAX],
 		[PROPTOTAL],
 		[PROPWORK],
@@ -1908,7 +2352,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [NaturalGasStorage] INTO 'lib://QVD (iparametrics_svc_qliksense)/NaturalGasStorage.qvd';
 DROP TABLE NaturalGasStorage;
-// ############################## Nursing Homes ##############################
+// ############################## NURSING HOMES ##############################
 LIB CONNECT TO 'ARCGIS_NursingHomes (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -2014,7 +2458,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [NursingHomes] INTO 'lib://QVD (iparametrics_svc_qliksense)/NursingHomes.qvd';
 DROP TABLE NursingHomes;
-// ############################## Petroleum Ports ##############################
+// ############################## PETROLEUM PORTS ##############################
 LIB CONNECT TO 'ARCGIS_PetrolPorts (iparametrics_jack.meersman)';
 
 RestConnectorMasterTable:
@@ -2127,7 +2571,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [PetrolPorts] INTO 'lib://QVD (iparametrics_svc_qliksense)/PetrolPorts.qvd';
 DROP TABLE PetrolPorts;
-// ############################## Petroleum Terminals ##############################
+// ############################## PETROLEUM TERMINALS ##############################
 LIB CONNECT TO 'ARCGIS_PetrolTerminals (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -2265,11 +2709,11 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [PetrolTerminals] INTO 'lib://QVD (iparametrics_svc_qliksense)/PetrolTerminals.qvd';
 DROP TABLE PetrolTerminals;
-// ############################## Pharmacies ##############################
+// ############################## PHARMACIES ##############################
 LIB CONNECT TO 'ARCGIS_Pharmacies (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the REST
-// source and assign to the 'total' local variable.
+//	source and assign to the 'total' local variable.
 
 LET total = 62973;
 LET totalfetched = 0;
@@ -2393,7 +2837,7 @@ LOAD	[FID] AS [FID],
 		[ID],
 		[SECCLASS] AS [SEC Class],
 		[NAME] AS [Name],
-		[TELEPHONE] AS [Phone #],
+		[TELEPHONE] AS [Phone],
 		[ADDRESS] AS [Address],
 		[ADDRESS2] AS [Address2],
 		[CITY] AS [City],
@@ -2489,7 +2933,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [Pharmacies] INTO 'lib://QVD (iparametrics_svc_qliksense)/Pharmacies.qvd';
 DROP TABLE Pharmacies;
-// ############################## Places of Worship ##############################
+// ############################## PLACES OF WORSHIP ##############################
 LIB CONNECT TO 'ARCGIS_PlacesOfWorship (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -2551,7 +2995,7 @@ SQL SELECT
 		FROM "attributes" FK "__FK_attributes")
 	FROM "features" PK "__KEY_features" FK "__FK_features")
 FROM JSON (wrap on) "root" PK "__KEY_root"
-WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/All_Places_of_Worship/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json");
+WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/All_Places_of_Worship/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
 // Action required: change URL included in 'WITH CONNECTION' AS needed
 //		to support pagination for the REST source.
 // Please see the documentation for "Loading paged data."
@@ -2605,7 +3049,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [PlacesOfWorship] INTO 'lib://QVD (iparametrics_svc_qliksense)/PlacesOfWorship.qvd';
 DROP TABLE PlacesOfWorship;
-// ############################## POL Pumping Stations ##############################
+// ############################## POL PUMPING STATIONS ##############################
 LIB CONNECT TO 'ARCGIS_POL_PumpingStation (iparametrics_jack.meersman)';
 
 RestConnectorMasterTable:
@@ -2692,7 +3136,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [POL_PumpingStations] INTO 'lib://QVD (iparametrics_svc_qliksense)/POL_PumpingStations.qvd';
 DROP TABLE POL_PumpingStations;
-// ############################## Power Plants ##############################
+// ############################## POWER PLANTS ##############################
 LIB CONNECT TO 'ARCGIS_PowerPlants (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -2782,7 +3226,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [PowerPlants] INTO 'lib://QVD (iparametrics_svc_qliksense)/PowerPlants.qvd';
 DROP TABLE PowerPlants;
-// ############################## Private Schools ##############################
+// ############################## PRIVATE SCHOOLS ##############################
 LIB CONNECT TO 'ARCGIS_PrivateSchools (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -2845,7 +3289,7 @@ WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/s
 NEXT startAt;
 
 [PrivateSchools]:
-LOAD	[FID]],
+LOAD	[FID],
 		[NCESID] AS [NCES ID],
 		[NAME] AS [Name],
 		[ADDRESS] AS [Address],
@@ -2884,7 +3328,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [PrivateSchools] INTO 'lib://QVD (iparametrics_svc_qliksense)/PrivateSchools.qvd';
 DROP TABLE PrivateSchools;
-// ############################## Public Schools ##############################
+// ############################## PUBLIC SCHOOLS ##############################
 LIB CONNECT TO 'ARCGIS_PublicSchools (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -2984,7 +3428,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [PublicSchools] INTO 'lib://QVD (iparametrics_svc_qliksense)/PublicSchools.qvd';
 DROP TABLE PublicSchools;
-// ############################## Routes-Stations ##############################
+// ############################## ROUTES-STATIONS ##############################
 LIB CONNECT TO 'ARCGIS_Routes-Stations (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -3034,7 +3478,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [Routes-Stations] INTO 'lib://QVD (iparametrics_svc_qliksense)/Routes-Stations.qvd';
 DROP TABLE [Routes-Stations];
-// ############################## State Capitol Buildings ##############################
+// ############################## STATE CAPITOL BUILDINGS ##############################
 LIB CONNECT TO 'ARCGIS_StateCapitolBuildings (iparametrics_jack.meersman)';
 
 RestConnectorMasterTable:
@@ -3093,7 +3537,7 @@ LOAD	[FID],
 		[PO_ZIP] AS [PO ZIP],
 		[CITY] AS [City],
 		[STATE] AS [State],
-		[ZIP]],
+		[ZIP],
 		[ZIP_4] AS [ZIP4],
 		[COUNTY] AS [County],
 		[HSIP_AOI],
@@ -3109,7 +3553,7 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [StateCapitolBuildings] INTO 'lib://QVD (iparametrics_svc_qliksense)/StateCapitolBuildings.qvd';
 DROP TABLE StateCapitolBuildings;
-// ############################## State EOCs ##############################
+// ############################## STATE EOCS ##############################
 LIB CONNECT TO 'ARCGIS_StateEOC (iparametrics_jack.meersman)';
 
 RestConnectorMasterTable:
@@ -3156,7 +3600,241 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [StateEOC] INTO 'lib://QVD (iparametrics_svc_qliksense)/StateEOC.qvd';
 DROP TABLE StateEOC;
-// ############################## Urgent Care ##############################
+// ######################### STRATEGIC PETROL RESERVES #########################
+LIB CONNECT TO 'ARCGIS_StrategicPetrolReserves (iparametrics_jack.meersman)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"OBJECTID",
+			"SPRID",
+			"NAME",
+			"ADDRESS",
+			"ADDRESS2",
+			"CITY",
+			"STATE",
+			"ZIP",
+			"ZIP4",
+			"TELEPHONE",
+			"TYPE",
+			"STATUS",
+			"POPULATION",
+			"COUNTY",
+			"COUNTYFIPS",
+			"COUNTRY",
+			"LATITUDE",
+			"LONGITUDE",
+			"NAICS_CODE",
+			"NAICS_DESC",
+			"SOURCE",
+			"SOURCEDATE",
+			"VAL_METHOD",
+			"VAL_DATE",
+			"WEBSITE",
+			"OPERATOR",
+			"POSREL",
+			"CAPACITY",
+			"CAVERNS",
+			"NUMPIPE",
+			"DIAMETER",
+			"PIPELINES",
+			"COMMODITY",
+			"DRAWDOWN",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root";
+
+[StrategicPetrolReserves]:
+LOAD	
+	[OBJECTID] AS [ObjectID],
+	[SPRID] AS [SPR ID],
+	[NAME] AS [Name],
+	[ADDRESS] AS [Address],
+	[ADDRESS2] AS [Address2],
+	[CITY] AS [City],
+	[STATE] AS [State],
+	[ZIP] AS [ZIP],
+	[ZIP4] AS [ZIP4],
+	[TELEPHONE] AS [Phone],
+	[TYPE] AS [Type],
+	[STATUS] AS [Status],
+	[POPULATION] AS [Population],
+	[COUNTY] AS [County],
+	[COUNTYFIPS] AS [County FIPS],
+	[COUNTRY] AS [Country],
+	[LATITUDE] AS [Latitude],
+	[LONGITUDE] AS [Longitude],
+	[NAICS_CODE] AS [NAICS Code],
+	[NAICS_DESC] AS [NAICS Description],
+	[SOURCE] AS [Source],
+	[SOURCEDATE] AS [Source Date],
+	[VAL_METHOD] AS [Validation Method],
+	[VAL_DATE] AS [Validation Date],
+	[WEBSITE] AS [Website],
+	[OPERATOR] AS [Operator],
+	[POSREL] AS [POSREL],
+	[CAPACITY] AS [Capacity],
+	[CAVERNS] AS [Caverns],
+	[NUMPIPE] AS [Number of Pipes],
+	[DIAMETER] AS [Diameter],
+	[PIPELINES] AS [Pipelines],
+	[COMMODITY] AS [Commodity],
+	[DRAWDOWN] AS [Drawdown],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [StrategicPetrolReserves] INTO 'lib://QVD (iparametrics_svc_qliksense)/StrategicPetrolReserves.qvd';
+DROP TABLE StrategicPetrolReserves;
+// ######################### TRANSMISSION TOWERS (AM) #########################
+LIB CONNECT TO 'ARCGIS_TransmissionTowers(AM) (iparametrics_jack.meersman)';
+
+// Action required: Implement the logic to retrieve the total records from the
+// REST source and assign to the 'total' local variable.
+
+LET total = 5078;
+LET totalfetched = 0;
+LET startAt = 0;
+LET pageSize = 2000;
+
+FOR startAt = 0 to total step pageSize
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"OBJECTID",
+			"CALLSIGN",
+			"FREQUENCY",
+			"SERVICE",
+			"CLASS",
+			"STATUS",
+			"CITY",
+			"STATE",
+			"COUNTRY",
+			"FILENUM",
+			"FACID",
+			"LAT",
+			"LON",
+			"LICENSEE",
+			"LATDD",
+			"LONDD",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/AM_Transmission_Towers/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
+// Action required: change URL included in 'WITH CONNECTION' AS needed
+//		to support pagination for the REST source.
+// Please see the documentation for "Loading paged data."
+
+NEXT startAt;
+
+[TransmissionTowers(AM)]:
+LOAD
+	[OBJECTID] AS [ObjectID],
+	[CALLSIGN] AS [Callsign],
+	[FREQUENCY] AS [Frequency],
+	[SERVICE] AS [Service],
+	[CLASS] AS [Class],
+	[STATUS] AS [Status],
+	[CITY] AS [City],
+	[STATE] AS [State],
+	[COUNTRY] AS [Country],
+	[FILENUM] AS [File Number],
+	[FACID] AS [FAC ID],
+	[LAT],
+	[LON],
+	[LICENSEE] AS [Licensee],
+	[LATDD] AS [Latitude],
+	[LONDD] AS [Longitude],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [TransmissionTowers(AM)] INTO 'lib://QVD (iparametrics_svc_qliksense)/TransmissionTowers(AM).qvd';
+DROP TABLE [TransmissionTowers(AM)];
+// ######################### TRANSMISSION TOWERS (FM) #########################
+LIB CONNECT TO 'ARCGIS_TransmissionTowers(FM) (iparametrics_jack.meersman)';
+
+// Action required: Implement the logic to retrieve the total records from the
+// REST source and assign to the 'total' local variable.
+
+LET total = 19212;
+LET totalfetched = 0;
+LET startAt = 0;
+LET pageSize = 2000;
+
+FOR startAt = 0 to total step pageSize
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"OBJECTID",
+			"CALLSIGN",
+			"FREQUENCY",
+			"SERVICE",
+			"CLASS",
+			"STATUS",
+			"CITY",
+			"STATE",
+			"COUNTRY",
+			"FILENUM",
+			"FACID",
+			"LAT",
+			"LON",
+			"LICENSEE",
+			"LATDD",
+			"LONDD",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/FM_Transmission_Towers/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
+// Action required: change URL included in 'WITH CONNECTION' AS needed
+//		to support pagination for the REST source.
+// Please see the documentation for "Loading paged data."
+
+NEXT startAt;
+
+[TransmissionTowers(FM)]:
+LOAD
+	[OBJECTID] AS [ObjectID],
+	[CALLSIGN] AS [Callsign],
+	[FREQUENCY] AS [Frequency],
+	[SERVICE] AS [Service],
+	[CLASS] AS [Class],
+	[STATUS] AS [Status],
+	[CITY] AS [City],
+	[STATE] AS [State],
+	[COUNTRY] AS [Country],
+	[FILENUM] AS [File Number],
+	[FACID] AS [FAC ID],
+	[LAT],
+	[LON],
+	[LICENSEE] AS [Licensee],
+	[LATDD] AS [Latitude],
+	[LONDD] AS [Longitude],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [TransmissionTowers(FM)] INTO 'lib://QVD (iparametrics_svc_qliksense)/TransmissionTowers(FM).qvd';
+DROP TABLE [TransmissionTowers(FM)];
+// ############################## URGENT CARE ##############################
 LIB CONNECT TO 'ARCGIS_UrgentCare (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the
@@ -3242,7 +3920,7 @@ LOAD	[OBJECTID] AS [ObjectID],
 		[HSIPTHEMES],
 		[NAICSCODE] AS [NAICS Code],
 		[NAICSDESCR] AS [NAICS Description],
-		[GEOLINKID] AS [GeoLink ID],
+		[GEOLINKID] AS [GeoLinkID],
 		[X] AS [Longitude],
 		[Y] AS [Latitude],
 		[ST_VENDOR] AS [ST Vendor],
@@ -3258,11 +3936,141 @@ WHERE NOT IsNull([__FK_attributes]);
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [UrgentCare] INTO 'lib://QVD (iparametrics_svc_qliksense)/UrgentCare.qvd';
 DROP TABLE UrgentCare;
-// ############################## Water Treatment Plants ##############################
+// ############################## VETERANS HOSPITALS ##############################
+LIB CONNECT TO 'ARCGIS_VeteranHospitals (iparametrics_jack.meersman)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"OBJECTID_1",
+			"NAME",
+			"ADDRESS",
+			"ADDRESS2",
+			"CITY",
+			"STATE",
+			"ZIP",
+			"ZIPP4",
+			"COUNTY",
+			"FIPS",
+			"DIRECTIONS",
+			"CONTDATE",
+			"CONTHOW",
+			"GEODATE",
+			"GEOHOW",
+			"NAICSCODE",
+			"NAICSDESCR",
+			"GEOLINKID",
+			"LONGITUDE",
+			"LATITUDE",
+			"ST_VENDOR",
+			"ST_VERSION",
+			"GEOPREC",
+			"PHONELOC",
+			"QC_QA",
+			"STA_NO",
+			"UID_",
+			"EXTRDATE",
+			"VISN",
+			"PROV",
+			"CONT",
+			"PAR_STA_NO",
+			"POD",
+			"OPER_DATE",
+			"SH_PAR_STA",
+			"CBOC",
+			"RRTP",
+			"IOC",
+			"MOC",
+			"VAMC",
+			"VCTR",
+			"HBOC",
+			"VANH",
+			"CD115",
+			"PRIM_SVC",
+			"ULID",
+			"CBSA",
+			"UA",
+			"URH",
+			"UNIQUE_ID",
+			"STA_FAX",
+			"SHAR",
+			"PHONE",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root";
+
+[VeteranHospitals]:
+LOAD
+	[OBJECTID_1] AS [ObjectID],
+	[NAME] AS [Name],
+	[ADDRESS] AS [Address],
+	[ADDRESS2] AS [Address2],
+	[CITY] AS [City],
+	[STATE] AS [State],
+	[ZIP],
+	[ZIPP4] AS [ZIP4],
+	[COUNTY] AS [County],
+	[FIPS],
+	[DIRECTIONS] AS [Directions],
+	[CONTDATE],
+	[CONTHOW],
+	[GEODATE],
+	[GEOHOW],
+	[NAICSCODE] AS [NAICS Code],
+	[NAICSDESCR] AS [NAICS Description],
+	[GEOLINKID] AS [GeoLinkID],
+	[LONGITUDE] AS [Longitude],
+	[LATITUDE] AS [Latitude],
+	[ST_VENDOR] AS [ST Vendor],
+	[ST_VERSION] AS [ST Version],
+	[GEOPREC],
+	[PHONELOC],
+	[QC_QA],
+	[STA_NO],
+	[UID_],
+	[EXTRDATE],
+	[VISN],
+	[PROV],
+	[CONT],
+	[PAR_STA_NO],
+	[POD],
+	[OPER_DATE],
+	[SH_PAR_STA],
+	[CBOC],
+	[RRTP],
+	[IOC],
+	[MOC],
+	[VAMC],
+	[VCTR],
+	[HBOC],
+	[VANH],
+	[CD115],
+	[PRIM_SVC],
+	[ULID],
+	[CBSA],
+	[UA],
+	[URH],
+	[UNIQUE_ID],
+	[STA_FAX],
+	[SHAR],
+	[PHONE] AS [Phone],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [VeteranHospitals] INTO 'lib://QVD (iparametrics_svc_qliksense)/VeteranHospitals.qvd';
+DROP TABLE VeteranHospitals;
+// ############################## WATER TREATMENT PLANTS ##############################
 LIB CONNECT TO 'ARCGIS_WaterTreatmentPlants (iparametrics_jack.meersman)';
 
 // Action required: Implement the logic to retrieve the total records from the REST
-// source and assign to the 'total' local variable.
+//	source and assign to the 'total' local variable.
 
 LET total = 5865;
 LET totalfetched = 0;
@@ -3332,7 +4140,12 @@ SQL SELECT
 			"STATE_WATER_BODY_NAME",
 			"OBJECTID",
 			"__FK_attributes"
-		FROM "attributes" FK "__FK_attributes")
+		FROM "attributes" FK "__FK_attributes"),
+        (SELECT 
+			"x",
+			"y",
+			"__FK_geometry"
+		FROM "geometry" FK "__FK_geometry")
 	FROM "features" PK "__KEY_features" FK "__FK_features")
 FROM JSON (wrap on) "root" PK "__KEY_root"
 WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/Environmental_Protection_Agency_EPA_Facility_Registry_Service_FRS_Wastewater_Treatment_Plants/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
@@ -3401,7 +4214,60 @@ LOAD	[SOURCE_ID] AS [Source ID],
 RESIDENT RestConnectorMasterTable
 WHERE NOT IsNull([__FK_attributes]);
 
+LEFT JOIN (WaterTreatmentPlants) LOAD
+	[x] AS [Longitude],
+	[y] AS [Latitude],
+	[__FK_geometry] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_geometry]);
+
 DROP TABLE RestConnectorMasterTable;
 STORE * FROM [WaterTreatmentPlants] INTO 'lib://QVD (iparametrics_svc_qliksense)/WaterTreatmentPlants.qvd';
 DROP TABLE WaterTreatmentPlants;
+// ############################## WEATHER STATIONS ##############################
+LIB CONNECT TO 'ARCGIS_WeatherStations (iparametrics_jack.meersman)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"OBJECTID",
+			"siteID",
+			"siteName",
+			"radarType",
+			"antennaElevation",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes"),
+		(SELECT 
+			"x",
+			"y",
+			"__FK_geometry"
+		FROM "geometry" FK "__FK_geometry")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root";
+
+[WeatherStations]:
+LOAD
+	[OBJECTID] AS [ObjectID],
+	[siteID] AS [Site ID],
+	[siteName] AS [Site Name],
+	[radarType] AS [Radar Type],
+	[antennaElevation] AS [Antenna Elevation],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+LEFT JOIN (WeatherStations) LOAD
+	[x] AS [Longitude],
+	[y] AS [Latitude],
+	[__FK_geometry] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_geometry]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [WeatherStations] INTO 'lib://QVD (iparametrics_svc_qliksense)/WeatherStations.qvd';
+DROP TABLE WeatherStations;
 // #################### END ARCGIS PUBLIC API CALLS ####################
