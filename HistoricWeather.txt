@@ -1,0 +1,585 @@
+// ################################################################################
+// Data pulled from National Geophysical Data Center (NGDC), a division of the
+// National Oceanic and Atmospheric Administration (NOAA), via ARCGIS RESTful APIs
+// ################################################################################
+
+// ############################## EARTHQUAKES ##############################
+LIB CONNECT TO 'Historic Disasters - Earthquakes (iparametrics_jack.meersman)';
+
+// Action required: Implement the logic to retrieve the total records from the REST
+//	source and assign to the 'total' local variable.
+LET total = 5984;
+LET totalfetched = 0;
+LET startAt = 0;
+LET pageSize = 1000;
+
+FOR startAt = 0 to total step pageSize
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"ID",
+			"YEAR",
+			"MONTH",
+			"DAY",
+			"HOUR",
+			"MINUTE",
+			"SECOND",
+			"DATE_STRING",
+			"LATITUDE",
+			"LONGITUDE",
+			"LOCATION_NAME",
+			"AREA",
+			"COUNTRY",
+			"REGION_CODE",
+			"REGION",
+			"EQ_DEPTH",
+			"EQ_MAG_UNK",
+			"EQ_MAG_MB",
+			"EQ_MAG_MS",
+			"EQ_MAG_MW",
+			"EQ_MAG_ML",
+			"EQ_MAG_MFA",
+			"EQ_MAGNITUDE",
+			"EQ_MAGNITUDE_RANK",
+			"INTENSITY",
+			"DAMAGE_MILLIONS_DOLLARS",
+			"DAMAGE_AMOUNT_ORDER",
+			"DAMAGE_DESCRIPTION",
+			"DEATHS",
+			"DEATHS_AMOUNT_ORDER",
+			"DEATHS_DESCRIPTION",
+			"INJURIES",
+			"INJURIES_AMOUNT_ORDER",
+			"INJURIES_DESCRIPTION",
+			"MISSING",
+			"MISSING_AMOUNT_ORDER",
+			"MISSING_DESCRIPTION",
+			"HOUSES_DESTROYED",
+			"HOUSES_AMOUNT_ORDER",
+			"HOUSES_DESCRIPTION",
+			"HOUSES_DAMAGED",
+			"HOUSES_DAMAGED_AMOUNT_ORDER",
+			"HOUSES_DAM_DESCRIPTION",
+			"DAMAGE_MILLIONS_DOLLARS_TOTAL",
+			"DAMAGE_AMOUNT_ORDER_TOTAL",
+			"DAMAGE_TOTAL_DESCRIPTION",
+			"DEATHS_TOTAL",
+			"DEATHS_AMOUNT_ORDER_TOTAL",
+			"DEATHS_TOTAL_DESCRIPTION",
+			"INJURIES_TOTAL",
+			"INJURIES_AMOUNT_ORDER_TOTAL",
+			"INJURIES_TOTAL_DESCRIPTION",
+			"MISSING_TOTAL",
+			"MISSING_AMOUNT_ORDER_TOTAL",
+			"MISSING_TOTAL_DESCRIPTION",
+			"HOUSES_DESTROYED_TOTAL",
+			"HOUSES_AMOUNT_ORDER_TOTAL",
+			"HOUSES_TOTAL_DESCRIPTION",
+			"HOUSES_DAMAGED_TOTAL",
+			"HOUSES_DAM_AMOUNT_ORDER_TOTAL",
+			"HOUSES_DAM_TOT_DESCRIPTION",
+			"FLAG_TSUNAMI",
+			"FLAG_VOL_EVENT",
+			"COMMENTS",
+			"URL",
+			"OBJECTID",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/hazards/MapServer/5/query?where=1%3D1&outFields=*&outSR=4326&f=json");
+// Action required: change URL included in 'WITH CONNECTION' AS needed
+//		to support pagination for the REST source.
+// Please see the documentation for "Loading paged data."
+
+NEXT startAt;
+
+[Earthquakes]:
+LOAD
+	[ID],
+	[YEAR] AS [Year],
+	[MONTH] AS [Month],
+	[DAY] AS [Day],
+	[HOUR] AS [Hour],
+	[MINUTE] AS [Minute],
+	[SECOND] AS [Second],
+	[DATE_STRING] AS [Date String],
+	[LATITUDE] AS [Latitude],
+	[LONGITUDE] AS [Longitude],
+	[LOCATION_NAME] AS [Location Name],
+	[AREA] AS [Area],
+	[COUNTRY] AS [Country],
+	[REGION_CODE] AS [Region Code],
+	[REGION] AS [Region],
+	[EQ_DEPTH],
+	[EQ_MAG_UNK],
+	[EQ_MAG_MB],
+	[EQ_MAG_MS],
+	[EQ_MAG_MW],
+	[EQ_MAG_ML],
+	[EQ_MAG_MFA],
+	[EQ_MAGNITUDE] AS [Magnitude],
+	[EQ_MAGNITUDE_RANK] AS [Magnitude Rank],
+	[INTENSITY] AS [Intensity],
+	[DAMAGE_MILLIONS_DOLLARS] AS [Damage Millions Dollars],
+	[DAMAGE_AMOUNT_ORDER] AS [Damage Amount Order],
+	[DAMAGE_DESCRIPTION] AS [Damage Description],
+	[DEATHS] AS [Deaths],
+	[DEATHS_AMOUNT_ORDER] AS [Deaths Amount Order],
+	[DEATHS_DESCRIPTION] AS [Deaths Description],
+	[INJURIES] AS [Injuries],
+	[INJURIES_AMOUNT_ORDER] AS [Injuries Amount Order],
+	[INJURIES_DESCRIPTION] AS [Injuries Description],
+	[MISSING] AS [Missing],
+	[MISSING_AMOUNT_ORDER] AS [Missing Amount Order],
+	[MISSING_DESCRIPTION] AS [Missing Description],
+	[HOUSES_DESTROYED] AS [Houses Destroyed],
+	[HOUSES_AMOUNT_ORDER] AS [Houses Amount Order],
+	[HOUSES_DESCRIPTION] AS [Houses Description],
+	[HOUSES_DAMAGED] AS [Houses Damaged],
+	[HOUSES_DAMAGED_AMOUNT_ORDER] AS [Houses Damaged Amount Order],
+	[HOUSES_DAM_DESCRIPTION] AS [Houses Damaged Description],
+	[DAMAGE_MILLIONS_DOLLARS_TOTAL] AS [Damage Millions Dollars Total],
+	[DAMAGE_AMOUNT_ORDER_TOTAL] AS [Damage Amount Order Total],
+	[DAMAGE_TOTAL_DESCRIPTION] AS [Damage Total Description],
+	[DEATHS_TOTAL] AS [Deaths Total],
+	[DEATHS_AMOUNT_ORDER_TOTAL] AS [Deaths Amount Order Total],
+	[DEATHS_TOTAL_DESCRIPTION] AS [Deaths Total Description],
+	[INJURIES_TOTAL] AS [Injuries Total],
+	[INJURIES_AMOUNT_ORDER_TOTAL] AS [Injuries Amount Order Total],
+	[INJURIES_TOTAL_DESCRIPTION] AS [Injuries Total Description],
+	[MISSING_TOTAL] AS [Missing Total],
+	[MISSING_AMOUNT_ORDER_TOTAL] AS [Missing Amount Order Total],
+	[MISSING_TOTAL_DESCRIPTION] AS [Missing Total Description],
+	[HOUSES_DESTROYED_TOTAL] AS [Houses Destroyed Total],
+	[HOUSES_AMOUNT_ORDER_TOTAL] AS [Houses Amount Order Total],
+	[HOUSES_TOTAL_DESCRIPTION] AS [Houses Total Description],
+	[HOUSES_DAMAGED_TOTAL] AS [Houses Damaged Total],
+	[HOUSES_DAM_AMOUNT_ORDER_TOTAL] AS [Houses Dam Amount Order Total],
+	[HOUSES_DAM_TOT_DESCRIPTION] AS [Houses Dam Tot Description],
+	[FLAG_TSUNAMI] AS [Flag Tsunami],
+	[FLAG_VOL_EVENT] AS [Flag Vol Event],
+	[COMMENTS] AS [Comments],
+	[URL],
+	[OBJECTID] AS [ObjectID],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [Earthquakes] INTO 'lib://QVD (iparametrics_svc_qliksense)/Earthquakes.qvd';
+DROP TABLE Earthquakes;
+// ################################### TORNADOES ###################################
+LIB CONNECT TO 'Historic Disasters - Tornadoes (iparametrics_jack.meersman)';
+
+// Action required: Implement the logic to retrieve the total records from the REST
+//	source and assign to the 'total' local variable.
+LET total = 60114;
+LET totalfetched = 0;
+LET startAt = 0;
+LET pageSize = 2000;
+
+FOR startAt = 0 to total step pageSize
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"OBJECTID",
+			"om",
+			"yr",
+			"mo",
+			"dy",
+			"date",
+			"time",
+			"tz",
+			"st",
+			"stf",
+			"stn",
+			"mag",
+			"inj",
+			"fat",
+			"loss",
+			"closs",
+			"slat",
+			"slon",
+			"elat",
+			"elon",
+			"len",
+			"wid",
+			"fc",
+			"Pre_1996_Loss",
+			"Shape__Length",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "https://services1.arcgis.com/Hp6G80Pky0om7QvQ/arcgis/rest/services/Historical_Tornado_Tracks/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=$(startAt)");
+// Action required: change URL included in 'WITH CONNECTION' AS needed
+//		to support pagination for the REST source.
+// Please see the documentation for "Loading paged data."
+
+NEXT startAt;
+
+[Tornadoes]:
+LOAD
+	[OBJECTID] AS [ObjectID],
+	[om],
+	[yr] AS [Year],
+	[mo] AS [Month],
+	[dy] AS [Day],
+	[date] AS [Date],
+	[time] AS [Time],
+	[tz],
+	[st] AS [State],
+	[stf] AS [State FIPS],
+	[stn],
+	[mag] AS [Magnitude],
+	[inj] AS [Injuries],
+	[fat] AS [Fatalities],
+	[loss],
+	[closs],
+	[slat] AS [Start Latitude],
+	[slon] AS [Start Longitude],
+	[elat] AS [End Latitude],
+	[elon] AS [End Longitude],
+	[len] AS [Length],
+	[wid] AS [Width],
+	[fc],
+	[Pre_1996_Loss] AS [Pre 1996 Loss],
+	[Shape__Length] AS [Shape Length],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [Tornadoes] INTO 'lib://QVD (iparametrics_svc_qliksense)/Tornadoes.qvd';
+DROP TABLE Tornadoes;
+// ################################### TSUNAMIS ###################################
+LIB CONNECT TO 'Historic Disasters - Tsunamis (iparametrics_jack.meersman)';
+
+// Action required: Implement the logic to retrieve the total records from the REST
+//	source and assign to the 'total' local variable.
+LET total = 2192;
+LET totalfetched = 0;
+LET startAt = 0;
+LET pageSize = 1000;
+
+FOR startAt = 0 to total step pageSize
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"ID",
+			"YEAR",
+			"MONTH",
+			"DAY",
+			"HOUR",
+			"MINUTE",
+			"SECOND",
+			"DATE_STRING",
+			"LATITUDE",
+			"LONGITUDE",
+			"LOCATION_NAME",
+			"AREA",
+			"COUNTRY",
+			"REGION_CODE",
+			"REGION",
+			"CAUSE_CODE",
+			"CAUSE",
+			"EVENT_VALIDITY_CODE",
+			"EVENT_VALIDITY",
+			"EQ_MAG_UNK",
+			"EQ_MAG_MB",
+			"EQ_MAG_MS",
+			"EQ_MAG_MW",
+			"EQ_MAG_ML",
+			"EQ_MAG_MFA",
+			"EQ_MAGNITUDE",
+			"EQ_MAGNITUDE_RANK",
+			"EQ_DEPTH",
+			"MAX_EVENT_RUNUP",
+			"TS_MT_ABE",
+			"TS_MT_II",
+			"TS_INTENSITY",
+			"DAMAGE_MILLIONS_DOLLARS",
+			"DAMAGE_AMOUNT_ORDER",
+			"DAMAGE_DESCRIPTION",
+			"HOUSES_DESTROYED",
+			"HOUSES_AMOUNT_ORDER",
+			"HOUSES_DESCRIPTION",
+			"DEATHS",
+			"DEATHS_AMOUNT_ORDER",
+			"DEATHS_DESCRIPTION",
+			"INJURIES",
+			"INJURIES_AMOUNT_ORDER",
+			"INJURIES_DESCRIPTION",
+			"MISSING",
+			"MISSING_AMOUNT_ORDER",
+			"MISSING_DESCRIPTION",
+			"COMMENTS",
+			"NUM_RUNUP",
+			"DAMAGE_MILLIONS_DOLLARS_TOTAL",
+			"DAMAGE_AMOUNT_ORDER_TOTAL",
+			"DAMAGE_TOTAL_DESCRIPTION",
+			"HOUSES_DESTROYED_TOTAL",
+			"HOUSES_AMOUNT_ORDER_TOTAL",
+			"HOUSES_TOTAL_DESCRIPTION",
+			"DEATHS_TOTAL",
+			"DEATHS_AMOUNT_ORDER_TOTAL",
+			"DEATHS_TOTAL_DESCRIPTION",
+			"INJURIES_TOTAL",
+			"INJURIES_AMOUNT_ORDER_TOTAL",
+			"INJURIES_TOTAL_DESCRIPTION",
+			"MISSING_TOTAL",
+			"MISSING_AMOUNT_ORDER_TOTAL",
+			"MISSING_TOTAL_DESCRIPTION",
+			"OBJECTID",
+			"HOUSES_DAMAGED",
+			"HOUSES_DAMAGED_AMOUNT_ORDER",
+			"HOUSES_DAM_DESCRIPTION",
+			"HOUSES_DAMAGED_TOTAL",
+			"HOUSES_DAM_AMOUNT_ORDER_TOTAL",
+			"HOUSES_DAM_TOTAL_DESCRIPTION",
+			"NUM_DEPOSITS",
+			"URL",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "https://gis.ngdc.noaa.gov/arcgis/rest/services/web_mercator/hazards/MapServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json");
+// Action required: change URL included in 'WITH CONNECTION' AS needed
+//		to support pagination for the REST source.
+// Please see the documentation for "Loading paged data."
+
+NEXT startAt;
+
+[Tsunamis]:
+LOAD
+	[ID],
+	[YEAR] AS [Year],
+	[MONTH] AS [Month],
+	[DAY] AS [Day],
+	[HOUR] AS [Hour],
+	[MINUTE] AS [Minute],
+	[SECOND] AS [Second],
+	[DATE_STRING] AS [Date String],
+	[LATITUDE] AS [Latitude],
+	[LONGITUDE] AS [Longitude],
+	[LOCATION_NAME] AS [Location Name],
+	[AREA] AS [Area],
+	[COUNTRY] AS [Country],
+	[REGION_CODE] AS [Region Code],
+	[REGION] AS [Region],
+	[CAUSE_CODE] AS [Cause Code],
+	[CAUSE] AS [Cause],
+	[EVENT_VALIDITY_CODE] AS [Event Validity Code],
+	[EVENT_VALIDITY] AS [Event Validity],
+	[EQ_MAG_UNK],
+	[EQ_MAG_MB],
+	[EQ_MAG_MS],
+	[EQ_MAG_MW],
+	[EQ_MAG_ML],
+	[EQ_MAG_MFA],
+	[EQ_MAGNITUDE],
+	[EQ_MAGNITUDE_RANK],
+	[EQ_DEPTH],
+	[MAX_EVENT_RUNUP],
+	[TS_MT_ABE],
+	[TS_MT_II],
+	[TS_INTENSITY],
+	[DAMAGE_MILLIONS_DOLLARS] AS [Damage Millions Dollars],
+	[DAMAGE_AMOUNT_ORDER] AS [Damage Amount Order],
+	[DAMAGE_DESCRIPTION] AS [Damage Description],
+	[HOUSES_DESTROYED] AS [Houses Destroyed],
+	[HOUSES_AMOUNT_ORDER] AS [Houses Amount Order],
+	[HOUSES_DESCRIPTION] AS [Houses Description],
+	[DEATHS] AS [Deaths],
+	[DEATHS_AMOUNT_ORDER] AS [Deaths Amount Order],
+	[DEATHS_DESCRIPTION] AS [Deaths Description],
+	[INJURIES] AS [Injuries],
+	[INJURIES_AMOUNT_ORDER] AS [Injuries Amount Order],
+	[INJURIES_DESCRIPTION] AS [Injuries Description],
+	[MISSING] AS [Missing],
+	[MISSING_AMOUNT_ORDER] AS [Missing Amount Order],
+	[MISSING_DESCRIPTION] AS [Missing Description],
+	[COMMENTS] AS [Comments],
+	[NUM_RUNUP],
+	[DAMAGE_MILLIONS_DOLLARS_TOTAL] AS [Damage Millions Dollars Total],
+	[DAMAGE_AMOUNT_ORDER_TOTAL] AS [Damage Amount Order Total],
+	[DAMAGE_TOTAL_DESCRIPTION] AS [Damage Total Description],
+	[HOUSES_DESTROYED_TOTAL] AS [Houses Destroyed Total],
+	[HOUSES_AMOUNT_ORDER_TOTAL] AS [Houses Amount Order Total],
+	[HOUSES_TOTAL_DESCRIPTION] AS [Houses Total Description],
+	[DEATHS_TOTAL] AS [Deaths Total],
+	[DEATHS_AMOUNT_ORDER_TOTAL] AS [Deaths Amount Order Total],
+	[DEATHS_TOTAL_DESCRIPTION] AS [Deaths Total Description],
+	[INJURIES_TOTAL] AS [Injuries Total],
+	[INJURIES_AMOUNT_ORDER_TOTAL] AS [Injuries Amount Order Total],
+	[INJURIES_TOTAL_DESCRIPTION] AS [Injuries Total Description],
+	[MISSING_TOTAL] AS [Missing Total],
+	[MISSING_AMOUNT_ORDER_TOTAL] AS [Missing Amount Order Total],
+	[MISSING_TOTAL_DESCRIPTION] AS [Missing Total Description],
+	[OBJECTID] AS [ObjectID],
+	[HOUSES_DAMAGED] AS [Houses Damaged],
+	[HOUSES_DAMAGED_AMOUNT_ORDER] AS [Houses Damaged Amount Order],
+	[HOUSES_DAM_DESCRIPTION] AS [Houses Damaged Description],
+	[HOUSES_DAMAGED_TOTAL] AS [Houses Damaged Total],
+	[HOUSES_DAM_AMOUNT_ORDER_TOTAL] AS [Houses Dam Amount Order Total],
+	[HOUSES_DAM_TOTAL_DESCRIPTION] AS [Houses Dam Total Description],
+	[NUM_DEPOSITS] AS [Number of Deposits],
+	[URL],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [Tsunamis] INTO 'lib://QVD (iparametrics_svc_qliksense)/Tsunamis.qvd';
+DROP TABLE Tsunamis;
+// ################################### VOLCANIC ERUPTIONS ###################################
+LIB CONNECT TO 'Historic Disasters - Volcanic Eruptions (iparametrics_jack.meersman)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"__FK_features",
+		"__KEY_features",
+		(SELECT 
+			"YEAR",
+			"MO",
+			"DAY",
+			"VEI",
+			"VOL_ID",
+			"FATALITIES",
+			"ASSOC_EQ",
+			"ASSOC_TSU",
+			"COMMENTS",
+			"DAMAGE_MILLIONS_DOLLARS",
+			"DAMAGE_AMOUNT_ORDER",
+			"DAMAGE_DESCRIPTION",
+			"DEATHS",
+			"DEATHS_AMOUNT_ORDER",
+			"DEATHS_DESCRIPTION",
+			"INJURIES",
+			"INJURIES_AMOUNT_ORDER",
+			"INJURIES_DESCRIPTION",
+			"MISSING",
+			"MISSING_AMOUNT_ORDER",
+			"MISSING_DESCRIPTION",
+			"HOUSES_DESTROYED",
+			"HOUSES_AMOUNT_ORDER",
+			"HOUSES_DESCRIPTION",
+			"DAMAGE_MILLIONS_DOLLARS_TOTAL",
+			"DAMAGE_AMOUNT_ORDER_TOTAL",
+			"DAMAGE_TOTAL_DESCRIPTION",
+			"DEATHS_TOTAL",
+			"DEATHS_AMOUNT_ORDER_TOTAL",
+			"DEATHS_TOTAL_DESCRIPTION",
+			"INJURIES_TOTAL",
+			"INJURIES_AMOUNT_ORDER_TOTAL",
+			"INJURIES_TOTAL_DESCRIPTION",
+			"MISSING_TOTAL",
+			"MISSING_AMOUNT_ORDER_TOTAL",
+			"MISSING_TOTAL_DESCRIPTION",
+			"HOUSES_DESTROYED_TOTAL",
+			"HOUSES_AMOUNT_ORDER_TOTAL",
+			"HOUSES_TOTAL_DESCRIPTION",
+			"SIGNIF",
+			"VALIDITY",
+			"NUM",
+			"NAME",
+			"LOCATION",
+			"LATITUDE",
+			"LONGITUDE",
+			"ELEVATION",
+			"MORPHOLOGY",
+			"STATUS",
+			"TIME_ERUPT",
+			"ID",
+			"COUNTRY",
+			"NUM_SLIDES",
+			"SIG_ID",
+			"TSU_ID",
+			"HAZ_EVENT_ID",
+			"OBJECTID",
+			"__FK_attributes"
+		FROM "attributes" FK "__FK_attributes")
+	FROM "features" PK "__KEY_features" FK "__FK_features")
+FROM JSON (wrap on) "root" PK "__KEY_root";
+
+[VolcanicEruptions]:
+LOAD
+	[YEAR] AS [Year],
+	[MO] AS [Month],
+	[DAY] AS [Day],
+	[VEI],
+	[VOL_ID] AS [Volcano ID],
+	[FATALITIES] AS [Fatalities],
+	[ASSOC_EQ],
+	[ASSOC_TSU],
+	[COMMENTS] AS [Comments],
+	[DAMAGE_MILLIONS_DOLLARS] AS [Damage Millions Dollars],
+	[DAMAGE_AMOUNT_ORDER] AS [Damage Amount Order],
+	[DAMAGE_DESCRIPTION] AS [Damage Description],
+	[DEATHS] AS [Deaths],
+	[DEATHS_AMOUNT_ORDER] AS [Deaths Amount Order],
+	[DEATHS_DESCRIPTION] AS [Deaths Description],
+	[INJURIES] AS [Injuries],
+	[INJURIES_AMOUNT_ORDER] AS [Injuries Amount Order],
+	[INJURIES_DESCRIPTION] AS [Injuries Description],
+	[MISSING] AS [Missing],
+	[MISSING_AMOUNT_ORDER] AS [Missing Amount Order],
+	[MISSING_DESCRIPTION] AS [Missing Description],
+	[HOUSES_DESTROYED] AS [Houses Destroyed],
+	[HOUSES_AMOUNT_ORDER] AS [Houses Amount Order],
+	[HOUSES_DESCRIPTION] AS [Houses Description],
+	[DAMAGE_MILLIONS_DOLLARS_TOTAL] AS [Damage Millions Dollars Total],
+	[DAMAGE_AMOUNT_ORDER_TOTAL] AS [Damage Amount Order Total],
+	[DAMAGE_TOTAL_DESCRIPTION] AS [Damage Total Description],
+	[DEATHS_TOTAL] AS [Deaths Total],
+	[DEATHS_AMOUNT_ORDER_TOTAL] AS [Deaths Amount Order Total],
+	[DEATHS_TOTAL_DESCRIPTION] AS [Deaths Total Description],
+	[INJURIES_TOTAL] AS [Injuries Total],
+	[INJURIES_AMOUNT_ORDER_TOTAL] AS [Injuries Amount Order Total],
+	[INJURIES_TOTAL_DESCRIPTION] AS [Injuries Total Description],
+	[MISSING_TOTAL] AS [Missing Total],
+	[MISSING_AMOUNT_ORDER_TOTAL] AS [Missing Amount Order Total],
+	[MISSING_TOTAL_DESCRIPTION] AS [Missing Total Description],
+	[HOUSES_DESTROYED_TOTAL] AS [Houses Destroyed Total],
+	[HOUSES_AMOUNT_ORDER_TOTAL] AS [Houses Amount Order Total],
+	[HOUSES_TOTAL_DESCRIPTION] AS [Houses Total Description],
+	[SIGNIF] AS [SIGNIF],
+	[VALIDITY] AS [Validity],
+	[NUM] AS [Number],
+	[NAME] AS [NAME],
+	[LOCATION] AS [Location],
+	[LATITUDE] AS [Latitude],
+	[LONGITUDE] AS [Longitude],
+	[ELEVATION] AS [Elevation],
+	[MORPHOLOGY] AS [Morphology],
+	[STATUS] AS [Status],
+	[TIME_ERUPT] AS [Time of Eruption],
+	[ID],
+	[COUNTRY] AS [Country],
+	[NUM_SLIDES] AS [Number of Slides],
+	[SIG_ID],
+	[TSU_ID],
+	[HAZ_EVENT_ID] AS [Hazardous Event ID],
+	[OBJECTID] AS [ObjectID],
+	[__FK_attributes] AS [__KEY_features]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_attributes]);
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [VolcanicEruptions] INTO 'lib://QVD (iparametrics_svc_qliksense)/VolcanicEruptions.qvd';
+DROP TABLE VolcanicEruptions;
