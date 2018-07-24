@@ -1,0 +1,52 @@
+// ############################## FEMA API ##############################
+LIB CONNECT TO 'FEMA_API (iparametrics_svc_qliksense)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"disasterNumber",
+	"pwNumber",
+	"applicationTitle",
+	"applicantId",
+	"damageCategoryCode",
+	"dcc",
+	"damageCategory",
+	"projectSize",
+	"county",
+	"countyCode",
+	"state",
+	"stateCode",
+	"stateNumberCode",
+	"projectAmount",
+	"federalShareObligated",
+	"totalObligated",
+	"hash",
+	"lastRefresh"
+FROM CSV (header on, delimiter ",", quote """") "CSV_source";
+
+[FEMA_Data]:
+LOAD
+	[disasterNumber] AS [Disaster Number],
+	[pwNumber] AS [PW Number],
+	[applicationTitle] AS [Application Title],
+	[applicantId] AS [Applicant ID],
+	[damageCategoryCode] AS [Damage Category Code],
+	[dcc] AS [dcc],
+	[damageCategory] AS [damageCategory],
+	[projectSize] AS [Project Size],
+	[county] AS [County],
+	[countyCode] AS [County Code],
+	[state] AS [State],
+	[stateCode] AS [State Code],
+	UPPER([county])&', '&[stateCode] AS CountyLocation2,
+	[stateNumberCode] AS [State Number Code],
+	[projectAmount] AS [Project Amount],
+	[federalShareObligated] AS [Federal Share Obligated],
+	[totalObligated] AS [Total Obligated],
+	IF(LEN([countyCode])=2,[stateNumberCode]&'0'&[countyCode],[stateNumberCode]&[countyCode]) AS [StateCountyCode],
+	[hash] AS [hash],
+	[lastRefresh] AS [lastRefresh]
+RESIDENT RestConnectorMasterTable;
+
+DROP TABLE RestConnectorMasterTable;
+STORE * FROM [FEMA_Data] INTO 'lib://QVD (iparametrics_svc_qliksense)/FEMA_Data.qvd';
+DROP TABLE FEMA_Data;
