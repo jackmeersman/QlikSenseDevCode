@@ -1,87 +1,33 @@
-// ######################### PRIMARY APP QVD LOAD #########################
+// ######################### PRIMARY FEMA APP QVD LOAD #########################
 
-// Applicants
+// APPLICANTS
 LOAD
     "Applicant ID",
-    Applicant_State,
+    Applicant_State AS [Applicant State],
     "Applicant Name",
-    "Address Line 1"
+    "Address Line 1" AS [Applicant Address]
 FROM [lib://QVD (iparametrics_svc_qliksense)/Applicant.qvd](QVD);
-INNER JOIN (Applicant) LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/StateID.qvd](QVD);
+INNER JOIN (Applicant) LOAD
+    "Infrastructure State" AS [Applicant State],
+    "Infrastructure State ID" AS [Applicant State ID]
+FROM [lib://QVD (iparametrics_svc_qliksense)/StateID.qvd](QVD);
 
 // Damage Codes
-LOAD
-    "Damage Category Code",
-    "Damage Category Description"
-FROM [lib://QVD (iparametrics_svc_qliksense)/DamageCodes.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/DamageCodes.qvd](QVD);
 
 // FEMA Zone Dissolve Table
-LOAD
-    FEMAZone,
-    FEMAZone_Geometry
-FROM [lib://QVD (iparametrics_svc_qliksense)/DissolveTable.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/DissolveTable.qvd](QVD);
 
 // EPA Data
-LOAD
-    TRI_FACILITY_ID,
-    FRS_ID,
-    FACILITY_NAME,
-    STREET_ADDRESS,
-    CITY,
-    CountyLocation2,
-    ZIP,
-    BIA_CODE,
-    TRIBE,
-    LATITUDE,
-    LONGITUDE,
-    GeoKey,
-    FEDERAL_FACILITY,
-    INDUSTRY_SECTOR_CODE,
-    INDUSTRY_SECTOR,
-    PRIMARY_SIC,
-    SIC_2,
-    SIC_3,
-    SIC_4,
-    SIC_5,
-    SIC_6,
-    PRIMARY_NAICS,
-    NAICS_2,
-    NAICS_3,
-    NAICS_4,
-    NAICS_5,
-    NAICS_6,
-    DOC_CTRL_NUM,
-    CHEMICAL,
-    "CAS_#/COMPOUND_ID",
-    SRS_ID,
-    CLEAR_AIR_ACT_CHEMICAL,
-    CLASSIFICATION,
-    METAL,
-    METAL_CATEGORY,
-    CARCINOGEN,
-    FORM_TYPE,
-    UNIT_OF_MEASURE,
-    PARENT_COMPANY_NAME,
-    PARENT_COMPANY_DB_NUMBER
-FROM [lib://QVD (iparametrics_svc_qliksense)/EPAData.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/EPAData.qvd](QVD);
 
 // FEMA Zone Data
-LOAD
-    StateCode,
-    "State Code",
-    FEMAZone
-FROM [lib://QVD (iparametrics_svc_qliksense)/FEMA_ZONES.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/FEMA_ZONES.qvd](QVD);
 
 // Disaster Data
-LOAD
-    "Disaster Number",
-    "Declaration Date",
-    DeclarationMonth,
-    "Incident Type",
-    "Number of Projects"
-FROM [lib://QVD (iparametrics_svc_qliksense)/PA_ApplicantSummary.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/PA_ApplicantSummary.qvd](QVD);
 
-// Primary table
+// PRIMARY TABLE
 LOAD
     "Disaster Number",
     "PW Number",
@@ -108,151 +54,117 @@ LOAD
 FROM [lib://QVD (iparametrics_svc_qliksense)/PWTab.qvd](QVD);
 
 // Staffing data
-LOAD
-    "Disaster Number",
-    StaffState,
-    Region,
-    "Disaster Title",
-    "Disaster Type",
-    "TOPR Tasks per SOW",
-    "Period of Performance (Start Date/Estimate)",
-    "Period of Performance (End Date)",
-    "TOPR requested Skill Cat. & Level",
-    "Fluor Task Order  (if applicable)",
-    Acct2,
-    Positions,
-    PositionCount
-FROM [lib://QVD (iparametrics_svc_qliksense)/Staff.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/Staff.qvd](QVD);
 
-// ????
-LOAD
-    TRI_FACILITY_ID,
-    HH0_5W0_75,
-    CenterPoint
-FROM [lib://QVD (iparametrics_svc_qliksense)/HH0_5W0_75GridTable.qvd](QVD);
+// GridTable area shape data
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/HH0_5W0_75GridTable.qvd](QVD);
 
 // Utilities data
-LOAD
-    "Utility ID",
-    "Utility Name",
-    "Plant Code",
-    "Plant Name",
-    PlantStreetAddress,
-    PlantCity,
-    PlantZip,
-    CountyStateKey,
-    PlantLatitude,
-    PlantLongtitude,
-    "NERC Region",
-    "Balancing Authority Code",
-    "Balancing Authority Name",
-    "Name of Water Source",
-    "Primary Purpose (NAICS Code)",
-    "Regulatory Status",
-    Sector,
-    "Sector Name",
-    "FERC Cogeneration Status",
-    "FERC Cogeneration Docket Number",
-    "FERC Small Power Producer Status",
-    "FERC Small Power Producer Docket Number",
-    "FERC Exempt Wholesale Generator Status",
-    "FERC Exempt Wholesale Generator Docket Number",
-    "Ash Impoundment?",
-    "Ash Impoundment Lined?",
-    "Ash Impoundment Status",
-    "Transmission or Distribution System Owner",
-    "Transmission or Distribution System Owner ID",
-    "Transmission or Distribution System Owner State",
-    "Grid Voltage (kV)",
-    "Criticality Rating",
-    "Grid Voltage 2 (kV)",
-    "Grid Voltage 3 (kV)",
-    "Energy Storage",
-    "Natural Gas LDC Name",
-    "Natural Gas Pipeline Name 1",
-    "Natural Gas Pipeline Name 2",
-    "Natural Gas Pipeline Name 3",
-    "Pipeline Notes",
-    "Natural Gas Storage",
-    "Liquefied Natural Gas Storage"
-FROM [lib://QVD (iparametrics_svc_qliksense)/Utilities.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/Utilities.qvd](QVD);
 
 // Disaster Declarations Summaries data
-LOAD
-    "Disaster Number",
-    "FEMA Disaster Title"
-FROM [lib://QVD (iparametrics_svc_qliksense)/DisasterDeclarationsSummaries.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/DisasterDeclarationsSummaries.qvd](QVD);
 
 // NAICS data
-LOAD
-    "Primary Purpose (NAICS Code)",
-    "NAICS Title"
-FROM [lib://QVD (iparametrics_svc_qliksense)/NAICS_Mapping.qvd](QVD);
+LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/NAICS_Mapping.qvd](QVD);
 
-// ########## BEGIN CRITICAL INFRASTRUCTURE TABLE ASSEMBLY ##########
+// #################### BEGIN CRITICAL INFRASTRUCTURE TABLE ASSEMBLY ####################
 [CriticalInfrastructure]:
 // AIRPORTS
 LOAD
     "Full Name" AS [Infrastructure Name],
     State AS [Infrastructure State],
-    County AS [Infrastructure County],
-    City AS [Infrastructure City],
-    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group
+    CAPITALIZE(County) AS [Infrastructure County],
+    CAPITALIZE(City) AS [Infrastructure City],
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Latitude,
+    Longitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/Airports.qvd](QVD);
+
+// BIODIESEL PLANTS
+OUTER JOIN (CriticalInfrastructure) LOAD
+    Name AS [Infrastructure Name],
+    Address AS [Infrastructure Address],
+    CAPITALIZE(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    ZIP AS [Infrastructure ZIP],
+    Phone AS [Infrastructure Phone #],
+    Status,
+    Population AS [Infrastructure Population],
+    CAPITALIZE(County) AS [Infrastructure County],
+    Country AS [Infrastructure Country],
+    Owner,
+    Latitude,
+    Longitude,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/BiodieselPlants.qvd](QVD);
 
 // BRIDGES
 OUTER JOIN (CriticalInfrastructure) LOAD
     "State FIPS" AS [Infrastructure State],
+    Status,
     Latitude,
     Longitude,
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/Bridges.qvd](QVD);
+
+// CELL TOWERS
+OUTER JOIN (CriticalInfrastructure) LOAD
+    Licensee AS [Infrastructure Name],
+    Address AS [Infrastructure Address],
+    CAPITALIZE(City) AS [Infrastructure City],
+    CAPITALIZE(County) AS [Infrastructure County],
+    State AS [Infrastructure State],
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group
+FROM [lib://QVD (iparametrics_svc_qliksense)/CellTowers.qvd](QVD);
 
 // COLLEGES
 OUTER JOIN (CriticalInfrastructure) LOAD
-	Name AS [Infrastructure Name],
+	Name&' ('&TEXT([IPEDS ID])&')' AS [Infrastructure Name],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
 	Phone AS [Infrastructure Phone #],
 	Population AS [Infrastructure Population],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
 	Country AS [Infrastructure Country],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/Colleges.qvd](QVD);
 
 // DAMS
 OUTER JOIN (CriticalInfrastructure) LOAD
-	Name AS [Infrastructure Name],
-	City AS [Infrastructure City],
+	Name&' ('&River&')' AS [Infrastructure Name],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
-	County AS [Infrastructure County],
-    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+	CAPITALIZE(County) AS [Infrastructure County],
+    LEFT(FILENAME(), LEN(FILENAME())-9) AS Group,
 	Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/DamLines.qvd](QVD);
 
 // DAY CARE CENTERS
 OUTER JOIN (CriticalInfrastructure) LOAD
-	Name AS [Infrastructure Name],
+	Name&' ('&Country&')' AS [Infrastructure Name],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
 	Phone AS [Infrastructure Phone #],
 	Population AS [Infrastructure Population],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
 	Country AS [Infrastructure Country],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/DayCareCenters.qvd](QVD);
 
 // EMS STATIONS
@@ -260,50 +172,101 @@ OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Phone AS [Infrastructure Phone #],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
-	County AS [Infrastructure County],
-    TOTALPERS AS [Infrastructure Population],
+	CAPITALIZE(County) AS [Infrastructure County],
+    "Total Persons" AS [Infrastructure Population],
+    Owner,
+    Type,
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/EMS_Stations.qvd](QVD);
+
+// ETHANOL PLANTS
+OUTER JOIN (CriticalInfrastructure) LOAD
+    Name AS [Infrastructure Name],
+    Address AS [Infrastructure Address],
+    CAPITALIZE(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    ZIP AS [Infrastructure ZIP],
+    Phone AS [Infrastructure Phone #],
+    Type,
+    Status,
+    Population AS [Infrastructure Population],
+    CAPITALIZE(County) AS [Infrastructure County],
+    Country AS [Infrastructure Country],
+    Owner,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Latitude,
+    Longitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/EthanolPlants.qvd](QVD);
+
+// FEMA REGIONAL HQ DATA
+OUTER JOIN (CriticalInfrastructure) LOAD
+    Capitalize(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    Type,
+    Address AS [Infrastructure Address],
+    ZIP AS [Infrastructure ZIP],
+    Name AS [Infrastructure Name],
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Latitude,
+    Longitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/FEMA_RegionalHQ.qvd](QVD);
 
 // FIRE STATIONS
 OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Phone AS [Infrastructure Phone #],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
-	County AS [Infrastructure County],
-    TOTALPERS AS [Infrastructure Population],
+	CAPITALIZE(County) AS [Infrastructure County],
+    [Total Persons] AS [Infrastructure Population],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/FireStations.qvd](QVD);
+
+// GOVERNMENT FINANCIAL PROCESSING
+OUTER JOIN (CriticalInfrastructure) LOAD
+    Name AS [Infrastructure Name],
+    Phone AS [Infrastructure Phone #],
+    Address AS [Infrastructure Address],
+    City AS [Infrastructure City],
+    CAPITALIZE(State) AS [Infrastructure State],
+    ZIP AS [Infrastructure ZIP],
+    Capitalize(County) AS [Infrastructure County],
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Longitude,
+    Latitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/GovernmentFinancialProcessing.qvd](QVD);
 
 // HOSPITALS
 OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
 	Phone AS [Infrastructure Phone #],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
 	Country AS [Infrastructure Country],
     Population AS [Infrastructure Population],
-    Type AS [Hospital Type],
+    Type,
     Beds,
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/Hospitals.qvd](QVD);
 
 // LOCAL EOC
@@ -311,14 +274,14 @@ OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Phone AS [Infrastructure Phone #],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=19&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/LocalEOC.qvd](QVD);
 
 // LOCAL LAW ENFORCEMENT
@@ -326,15 +289,15 @@ OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Phone AS [Infrastructure Phone #],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
     [Total Population] AS [Infrastructure Population],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/LocalLawEnforcement.qvd](QVD);
 
 // MAJOR STATE GOVERNMENT BUILDINGS
@@ -342,96 +305,112 @@ OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Phone AS [Infrastructure Phone #],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/MajorStateGovBuildings.qvd](QVD);
+
+// NATURAL GAS HUBS
+OUTER JOIN (CriticalInfrastructure) LOAD
+    State AS [Infrastructure State],
+    "Hub Name" AS [Infrastructure Name],
+    Administrator AS Owner,
+    Operator,
+    "Type Operator" AS Type,
+    Status,
+    CAPITALIZE(City) AS [Infrastructure City],
+    CAPITALIZE(County) AS [Infrastructure County],
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Latitude,
+    Longitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/NaturalGasHubs.qvd](QVD);
 
 // NATURAL GAS STORAGE
 OUTER JOIN (CriticalInfrastructure) LOAD
     Name AS [Infrastructure Name],
     Address AS [Infrastructure Address],
-    City AS [Infrastructure City],
+    CAPITALIZE(City) AS [Infrastructure City],
     State AS [Infrastructure State],
     ZIP AS [Infrastructure ZIP],
     "Phone #" AS [Infrastructure Phone #],
     Population AS [Infrastructure Population],
-    County AS [Infrastructure County],
+    CAPITALIZE(County) AS [Infrastructure County],
     Country AS [Infrastructure Country],
-    Latitude,
-    Longitude,
-    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
     Owner,
     Operator,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Latitude,
+    Longitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/NaturalGasStorage.qvd](QVD);
 
 // NURSING HOMES
 OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
 	Phone AS [Infrastructure Phone #],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
 	Country AS [Infrastructure Country],
     Population AS [Infrastructure Population],
     Beds,
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/NursingHomes.qvd](QVD);
 
 // PETROLEUM PORTS
 OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	State AS [Infrastructure State],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
 	Country AS [Infrastructure Country],
     Operator,
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/PetrolPorts.qvd](QVD);
 
 // PETROLEUM TERMINALS
 OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
 	Phone AS [Infrastructure Phone #],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
     Population AS [Infrastructure Population],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/PetrolTerminals.qvd](QVD);
 
 // PHARMACIES
 OUTER JOIN (CriticalInfrastructure) LOAD
     Name AS [Infrastructure Name],
-    "Phone #" AS [Infrastructure Phone #],
+    Phone AS [Infrastructure Phone #],
     Address AS [Infrastructure Address],
-    City AS [Infrastructure City],
+    CAPITALIZE(City) AS [Infrastructure City],
     State AS [Infrastructure State],
     ZIP AS [Infrastructure ZIP],
-    County AS [Infrastructure County],
-    Longitude,
-    Latitude,
+    CAPITALIZE(County) AS [Infrastructure County],
     "Organization Name" AS Operator,
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    Longitude,
+    Latitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/Pharmacies.qvd](QVD);
 
 // PLACES OF WORSHIP
@@ -439,94 +418,101 @@ OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Phone AS [Infrastructure Phone #],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
     Members AS [Infrastructure Population],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/PlacesOfWorship.qvd](QVD);
 
 // POL PUMPING STATIONS
 OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
 	Phone AS [Infrastructure Phone #],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
 	Country AS [Infrastructure Country],
     Operator,
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/POL_PumpingStations.qvd](QVD);
 
 // POWER PLANTS
 OUTER JOIN (CriticalInfrastructure) LOAD
-    Name AS [Infrastructure Name],
-    City AS [Infrastructure City],
+    Name&' ('&Operator&')' AS [Infrastructure Name],
+    CAPITALIZE(City) AS [Infrastructure City],
     State AS [Infrastructure State],
     ZIP AS [Infrastructure ZIP],
     Country AS [Infrastructure Country],
-    Plant,
+    Plant AS Owner,
     Operator,
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
     Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/PowerPlants.qvd](QVD);
 
 // PRIVATE SCHOOLS
 OUTER JOIN (CriticalInfrastructure) LOAD
-	Name AS [Infrastructure Name],
+	Name&' (Private)' AS [Infrastructure Name],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
 	Population AS [Infrastructure Population],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
 	Country AS [Infrastructure Country],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/PrivateSchools.qvd](QVD);
 
 // PUBLIC SCHOOLS
 OUTER JOIN (CriticalInfrastructure) LOAD
-	Name AS [Infrastructure Name],
+	Name&' (Public)' AS [Infrastructure Name],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
 	Phone AS [Infrastructure Phone #],
 	Population AS [Infrastructure Population],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
 	Country AS [Infrastructure Country],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/PublicSchools.qvd](QVD);
+
+// ROUTES & STATIONS
+OUTER JOIN (CriticalInfrastructure) LOAD
+    "Route Name" AS [Infrastructure Name],
+    System AS Operator,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group
+FROM [lib://QVD (iparametrics_svc_qliksense)/Routes-Stations.qvd](QVD);
 
 // STATE CAPITOL BUILDINGS
 OUTER JOIN (CriticalInfrastructure) LOAD
-	Name1 AS [Infrastructure Name],
-	Address1 AS [Infrastructure Address],
-	City AS [Infrastructure City],
-	State AS [Infrastructure State],
-	ZIP AS [Infrastructure ZIP],
-	County AS [Infrastructure County],
+    "Name 1" AS [Infrastructure Name],
+    Address AS [Infrastructure Address],
+    CAPITALIZE(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    ZIP AS [Infrastructure ZIP],
+    CAPITALIZE(County) AS [Infrastructure County],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/StateCapitolBuildings.qvd](QVD);
 
 // STATE EOC
@@ -540,49 +526,194 @@ OUTER JOIN (CriticalInfrastructure) LOAD
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
 	Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/StateEOC.qvd](QVD);
+
+// STRATEGIC PETROLEUM RESERVES
+OUTER JOIN (CriticalInfrastructure) LOAD
+    Name AS [Infrastructure Name],
+    Address AS [Infrastructure Address],
+    CAPITALIZE(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    ZIP AS [Infrastructure ZIP],
+    Type,
+    Status,
+    CAPITALIZE(County) AS [Infrastructure County],
+    Country AS [Infrastructure Country],
+    Operator,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Latitude,
+    Longitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/StrategicPetrolReserves.qvd](QVD);
+
+// TRANSMISSION TOWERS (AM)
+OUTER JOIN (CriticalInfrastructure) LOAD
+    Callsign AS [Infrastructure Name],
+    Status,
+    CAPITALIZE(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    Country AS [Infrastructure Country],
+    Licensee AS Operator,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Latitude,
+    Longitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/TransmissionTowers(AM).qvd](QVD);
+
+// TRANSMISSION TOWERS (FM)
+OUTER JOIN (CriticalInfrastructure) LOAD
+    Callsign AS [Infrastructure Name],
+    Status,
+    CAPITALIZE(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    Country AS [Infrastructure Country],
+    Licensee AS Operator,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Latitude,
+    Longitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/TransmissionTowers(FM).qvd](QVD);
 
 // URGENT CARE
 OUTER JOIN (CriticalInfrastructure) LOAD
 	Name AS [Infrastructure Name],
 	Phone AS [Infrastructure Phone #],
 	Address AS [Infrastructure Address],
-	City AS [Infrastructure City],
+	CAPITALIZE(City) AS [Infrastructure City],
 	State AS [Infrastructure State],
 	ZIP AS [Infrastructure ZIP],
-	County AS [Infrastructure County],
+	CAPITALIZE(County) AS [Infrastructure County],
     LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
 	Latitude,
     Longitude,
-    'https://www.google.com/maps/@?api=1&map_action=map&center='&Latitude&','&Longitude&'&zoom=20&basemap=satellite' AS [Map URL]
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/UrgentCare.qvd](QVD);
+
+// VETERANS HOSPITALS
+OUTER JOIN (CriticalInfrastructure) 
+LOAD
+    Name AS [Infrastructure Name],
+    Address AS [Infrastructure Address],
+    CAPITALIZE(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    ZIP AS [Infrastructure ZIP],
+    CAPITALIZE(County) AS [Infrastructure County],
+    Phone AS [Infrastructure Phone #],
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Longitude,
+    Latitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/VeteranHospitals.qvd](QVD);
 
 // WATER TREATMENT PLANTS
 OUTER JOIN (CriticalInfrastructure) LOAD
-    "CWP Name" AS [Infrastructure Name],
-    "CWP Street" AS [Infrastructure Address],
-    "CWP City" AS [Infrastructure City],
-    "CWP State" AS [Infrastructure State],
-    "CWP ZIP" AS [Infrastructure ZIP],
-    "CWP County" AS [Infrastructure County],
-    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group
+    Name AS [Infrastructure Name],
+    Address AS [Infrastructure Address],
+    CAPITALIZE(City) AS [Infrastructure City],
+    State AS [Infrastructure State],
+    ZIP AS [Infrastructure ZIP],
+    CAPITALIZE(County) AS [Infrastructure County],
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Longitude,
+    Latitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
 FROM [lib://QVD (iparametrics_svc_qliksense)/WaterTreatmentPlants.qvd](QVD);
-// ########## END CRITICAL INFRASTRUCTURE TABLE ASSEMBLY ##########
+
+// WEATHER STATIONS
+OUTER JOIN (CriticalInfrastructure) LOAD
+    "Site Name" AS [Infrastructure Name],
+    "Radar Type" AS Type,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS Group,
+    Longitude,
+    Latitude,
+    'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/WeatherStations.qvd](QVD);
+// #################### END CRITICAL INFRASTRUCTURE TABLE ASSEMBLY ####################
 
 // Inner Join to consolidate state codes and names
 INNER JOIN (CriticalInfrastructure) LOAD * FROM [lib://QVD (iparametrics_svc_qliksense)/StateID.qvd](QVD);
+
+// #################### BEGIN HISTORICAL DISASTER TABLE ASSEMBLY ####################
+[HistoricalDisasters]:
+// EARTHQUAKES
+LOAD
+    ID AS [Disaster ID],
+    Year AS [Disaster Year],
+    Month AS [Disaster Month],
+    Day AS [Disaster Day],
+    Hour AS [Disaster Hour],
+    Minute AS [Disaster Minute],
+    Second AS [Disaster Second],
+    "Date String" AS [Disaster Date],
+    "Location Name" AS [Disaster Location],
+    Country AS [Disaster Country],
+    Magnitude,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS [Disaster Group],
+    Latitude AS [Disaster Latitude],
+    Longitude AS [Disaster Longitude],
+	'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Disaster Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/Earthquakes.qvd](QVD);
+
+OUTER JOIN (HistoricalDisasters) LOAD
+    Year AS [Disaster Year],
+    Month AS [Disaster Month],
+    Day AS [Disaster Day],
+    Date AS [Disaster Date],
+    Time AS [Disaster Time],
+    State AS [Disaster State],
+    Magnitude,
+    Injuries,
+    Fatalities,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS [Disaster Group],
+    "Start Latitude" AS [Disaster Latitude],
+    "Start Longitude" AS [Disaster Longitude],
+    'https://earth.google.com/web/@'&"Start Latitude"&','&"Start Longitude"&',150a,300d,35y,0h,0t,0r' AS [Disaster Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/Tornadoes.qvd](QVD);
+
+OUTER JOIN (HistoricalDisasters) LOAD
+    Year AS [Disaster Year],
+    Month AS [Disaster Month],
+    Day AS [Disaster Day],
+    Hour AS [Disaster Hour],
+    Minute AS [Disaster Minute],
+    Second AS [Disaster Second],
+    "Date String" AS [Disaster Date],
+    "Location Name" AS [Disaster Location],
+    Country AS [Disaster Country],
+    EQ_MAGNITUDE AS Magnitude,
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS [Disaster Group],
+    Latitude AS [Disaster Latitude],
+    Longitude AS [Disaster Longitude],
+	'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Disaster Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/Tsunamis.qvd](QVD);
+
+OUTER JOIN (HistoricalDisasters) LOAD
+    Year AS [Disaster Year],
+    Month AS [Disaster Month],
+    Day AS [Disaster Day],
+    "Volcano ID",
+    Fatalities,
+    Injuries,
+    Location AS [Disaster Location],
+    Country AS [Disaster Country],
+    LEFT(FILENAME(), LEN(FILENAME())-4) AS [Disaster Group],
+    Latitude AS [Disaster Latitude],
+    Longitude AS [Disaster Longitude],
+	'https://earth.google.com/web/@'&Latitude&','&Longitude&',150a,300d,35y,0h,0t,0r' AS [Disaster Map URL]
+FROM [lib://QVD (iparametrics_svc_qliksense)/VolcanicEruptions.qvd](QVD);
+// #################### END HISTORICAL DISASTER TABLE ASSEMBLY ####################
 
 // Dropbox connect to additional applicant data
 LIB CONNECT TO 'Dropbox - Jack Meersman (iparametrics_jack.meersman)';
 
 QUALIFY *;
-UNQUALIFY DisasterNumber;
+UNQUALIFY "Applicant ID";
 [ApplicantListingKOM]:
 LOAD
     DisasterNumber,
-    ApplicantID,
-    ApplicantName,
+    ApplicantID AS [Applicant ID],
+    ApplicantName AS [Applicant Name],
     ApplicantType,
     PNPStatus,
     RPAReferenceNumber,
@@ -594,7 +725,7 @@ LOAD
     PermanentWorkStrategyMeetingDate,
     DamageInventoryReceivedDate,
     NumberOfDamagesIdentified,
-    Status,
+    Status AS [Applicant Status],
     "Days Due"
 FROM [lib://Dropbox - Jack Meersman (iparametrics_jack.meersman)/iParametrics\Applicant Listing_KOM_DI_07.02.18.xlsx]
-(ooxml, embedded labels, table is Sheet1);
+(OOXML, EMBEDDED LABELS, TABLE IS Sheet1);
